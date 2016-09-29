@@ -30,6 +30,14 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "LED_RED.h"
+#include "BitIoLdd1.h"
+#include "WAIT1.h"
+#include "KSDK1.h"
+#include "LED_BLUE.h"
+#include "BitIoLdd2.h"
+#include "LED_GREEN.h"
+#include "BitIoLdd3.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -47,8 +55,16 @@ int main(void)
   PE_low_level_init();
   /*** End of Processor Expert internal initialization.                    ***/
 
-  /* Write your code here */
-  /* For example: for(;;) { } */
+  //LED_GREEN_SetVal();
+  //LED_BLUE_SetVal();
+
+  for(;;) {
+
+	  WAIT1_Waitms(1000);
+	  LED_RED_SetVal();
+	  WAIT1_Waitms(1000);
+	  LED_RED_ClrVal();
+  }
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
