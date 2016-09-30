@@ -129,8 +129,20 @@ void APP_Start(void) {
     EVNT_HandleEvent(APP_EventHandler, TRUE);
 #endif
     WAIT1_Waitms(25); /* just wait for some arbitrary time .... */
+    APP_Run();
   }
 #endif
+}
+
+void APP_Run(void){
+	for(;;){
+    LED1_On();
+    LED2_Off();
+    WAIT1_Waitms(500);
+    LED1_Off();
+    LED2_On();
+    WAIT1_Waitms(500);
+	}
 }
 
 
