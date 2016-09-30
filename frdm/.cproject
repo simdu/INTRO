@@ -120,7 +120,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.pathentry"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/INTRO_FRDM_Master"/>
+			<resource resourceType="PROJECT" workspacePath="/frdm"/>
 		</configuration>
 	</storageModule>
 </cproject>
