@@ -104,7 +104,6 @@ static void APP_AdoptToHardware(void) {
 }
 
 void APP_Start(void) {
-	int count = 0;
 #if PL_CONFIG_HAS_RTOS
 #if configUSE_TRACE_HOOKS
   PTRC1_uiTraceStart();
@@ -123,7 +122,6 @@ void APP_Start(void) {
   /* does usually not return! */
 #else
   for(;;) {
-	  count++;
 #if PL_CONFIG_HAS_KEYS
     KEY_Scan();
 #endif
@@ -131,11 +129,6 @@ void APP_Start(void) {
     EVNT_HandleEvent(APP_EventHandler, TRUE);
 #endif
     WAIT1_Waitms(25); /* just wait for some arbitrary time .... */
-
-    if(count >=  4){
-    	count = 0;
-    	EVNT_SetEvent(EVNT_LED_HEARTBEAT);
-    }
   }
 #endif
 }
