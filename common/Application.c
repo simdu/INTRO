@@ -65,16 +65,22 @@ void APP_EventHandler(EVNT_Handle event) {
     BUZ_PlayTune(BUZ_TUNE_BUTTON);
     #endif
     break;
+#if PL_CONFIG_NOF_KEYS>=2
   case EVNT_SW2_PRESSED:
 	  break;
+#if PL_CONFIG_NOF_KEYS>=3
   case EVNT_SW3_PRESSED:
 	  break;
+#if PL_CONFIG_NOF_KEYS>=4
   case EVNT_SW4_PRESSED:
 	  break;
+#if PL_CONFIG_NOF_KEYS>=5
   case EVNT_SW5_PRESSED:
 	  break;
+#if PL_CONFIG_NOF_KEYS>=6
   case EVNT_SW6_PRESSED:
 	  break;
+#if PL_CONFIG_NOF_KEYS>=7
   case EVNT_SW7_PRESSED:
 	  break;
   #endif
