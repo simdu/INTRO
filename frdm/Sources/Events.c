@@ -29,6 +29,7 @@
 #include "Cpu.h"
 #include "Events.h"
 #include "Timer.h"
+#include "Event.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,6 +72,91 @@ void Cpu_OnNMIINT(void)
 void TI1_OnInterrupt(void)
 {
 	TMR_OnInterrupt();
+}
+
+/*
+** ===================================================================
+**     Event       :  SW7_OnInterrupt (module Events)
+**
+**     Component   :  SW7 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW7_OnInterrupt(void)
+{
+	EVNT_SetEvent(EVNT_SW7_PRESSED);
+}
+
+/*
+** ===================================================================
+**     Event       :  SW4_OnInterrupt (module Events)
+**
+**     Component   :  SW4 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW4_OnInterrupt(void)
+{
+	EVNT_SetEvent(EVNT_SW4_PRESSED);
+}
+
+/*
+** ===================================================================
+**     Event       :  SW3_OnInterrupt (module Events)
+**
+**     Component   :  SW3 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW3_OnInterrupt(void)
+{
+	EVNT_SetEvent(EVNT_SW3_PRESSED);
+}
+
+/*
+** ===================================================================
+**     Event       :  SW2_OnInterrupt (module Events)
+**
+**     Component   :  SW2 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW2_OnInterrupt(void)
+{
+	EVNT_SetEvent(EVNT_SW2_PRESSED);
+}
+
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW1_OnInterrupt(void)
+{
+	EVNT_SetEvent(EVNT_SW1_PRESSED);
 }
 
 /* END Events */
