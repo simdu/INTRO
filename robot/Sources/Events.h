@@ -39,6 +39,8 @@
 #include "BitIoLdd2.h"
 #include "BUZ1.h"
 #include "BitIoLdd4.h"
+#include "SW1.h"
+#include "ExtIntLdd1.h"
 #include "TU_MCP4728.h"
 #include "MCP4728_LDAC.h"
 #include "BitIoLdd20.h"
@@ -93,6 +95,20 @@ void Cpu_OnNMIINT(void);
 ** ===================================================================
 */
 void TI1_OnInterrupt(void);
+
+void SW1_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
 
 /* END Events */
 

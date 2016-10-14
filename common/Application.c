@@ -56,28 +56,40 @@ void APP_EventHandler(EVNT_Handle event) {
     break;
 
 #if PL_CONFIG_HAS_KEYS
-  #if PL_CONFIG_NOF_KEYS>=1
+	#if PL_CONFIG_NOF_KEYS>=1
 	case EVNT_SW1_PRESSED:
-    LED2_Neg();
-    //CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
-    //SHELL_SendString("SW1 pressed\r\n");
-    #if PL_CONFIG_HAS_BUZZER
-    BUZ_PlayTune(BUZ_TUNE_BUTTON);
-    #endif
-    break;
-  case EVNT_SW2_PRESSED:
-	  break;
-  case EVNT_SW3_PRESSED:
-	  break;
-  case EVNT_SW4_PRESSED:
-	  break;
-  case EVNT_SW5_PRESSED:
-	  break;
-  case EVNT_SW6_PRESSED:
-	  break;
-  case EVNT_SW7_PRESSED:
-	  break;
-  #endif
+		LED2_Neg();
+		//CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
+		//SHELL_SendString("SW1 pressed\r\n");
+		#if PL_CONFIG_HAS_BUZZER
+		BUZ_PlayTune(BUZ_TUNE_BUTTON);
+		#endif
+	break;
+	#endif
+	#if PL_CONFIG_NOF_KEYS>=2
+	case EVNT_SW2_PRESSED:
+		  break;
+	#endif
+	#if PL_CONFIG_NOF_KEYS>=3
+	case EVNT_SW3_PRESSED:
+		  break;
+	#endif
+	#if PL_CONFIG_NOF_KEYS>=4
+	case EVNT_SW4_PRESSED:
+		  break;
+	#endif
+	#if PL_CONFIG_NOF_KEYS>=5
+	case EVNT_SW5_PRESSED:
+		  break;
+	#endif
+	#if PL_CONFIG_NOF_KEYS>=6
+	case EVNT_SW6_PRESSED:
+		  break;
+	#endif
+	#if PL_CONFIG_NOF_KEYS>=7
+	case EVNT_SW7_PRESSED:
+		  break;
+	#endif
 #endif /* PL_CONFIG_HAS_KEYS */
 
   default:

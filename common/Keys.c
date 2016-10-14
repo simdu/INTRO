@@ -40,13 +40,13 @@ void KEY_Scan(void) {
 
 	#if PL_CONFIG_NOF_KEYS >= 3 && !PL_CONFIG_KEY_3_ISR
 	  if (KEY3_Get()) { /* key pressed */
-		EVNT_SetEvent(EVNT_SW1_PRESSED);
+		EVNT_SetEvent(EVNT_SW3_PRESSED);
 	  }
 	#endif
 
 	#if PL_CONFIG_NOF_KEYS >= 4 && !PL_CONFIG_KEY_4_ISR
 	  if (KEY4_Get()) { /* key pressed */
-		EVNT_SetEvent(EVNT_SW1_PRESSED);
+		EVNT_SetEvent(EVNT_SW4_PRESSED);
 	  }
 	#endif
 
