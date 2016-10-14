@@ -56,7 +56,7 @@ void APP_EventHandler(EVNT_Handle event) {
   case EVNT_SW1_PRESSED:
     LED2_Neg();
     //CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
-    SHELL_SendString("SW1 pressed\r\n");
+    //SHELL_SendString("SW1 pressed\r\n");
     #if PL_CONFIG_HAS_BUZZER
     BUZ_PlayTune(BUZ_TUNE_BUTTON);
     #endif
@@ -113,14 +113,15 @@ void APP_Start(void) {
 #if PL_CONFIG_HAS_EVENTS
   EVNT_SetEvent(EVNT_STARTUP);
 #endif
-#if CLS1_DEFAULT_SERIAL
-  CLS1_SendStr("Hello World!\r\n", CLS1_GetStdio()->stdOut);
+#if PL_CONFIG_HAS_SHELL && CLS1_DEFAULT_SERIAL
+  CLS1_SendStr((uint8_t*)"Hello World!\r\n", CLS1_GetStdio()->stdOut);
 #endif
   APP_AdoptToHardware();
 #if PL_CONFIG_HAS_RTOS
   vTaskStartScheduler(); /* start the RTOS, create the IDLE task and run my tasks (if any) */
   /* does usually not return! */
 #else
+  //EVNT_SetEvent(EVNT_STARTUP);
   for(;;) {
 #if PL_CONFIG_HAS_KEYS
     KEY_Scan();
