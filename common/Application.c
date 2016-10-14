@@ -42,13 +42,17 @@
 void APP_EventHandler(EVNT_Handle event) {
   switch(event) {
   case EVNT_STARTUP:
+#if PL_CONFIG_HAS_LEDS
     LED1_On(); /* just do something */
+#endif
 #if PL_CONFIG_HAS_BUZZER
     BUZ_PlayTune(BUZ_TUNE_WELCOME);
 #endif
     break;
   case EVNT_LED_HEARTBEAT:
+#if PL_CONFIG_HAS_LEDS
     LED1_Neg();
+#endif
     break;
 
 #if PL_CONFIG_HAS_KEYS
@@ -64,6 +68,8 @@ void APP_EventHandler(EVNT_Handle event) {
   #endif
 #endif /* PL_CONFIG_HAS_KEYS */
 
+  default:
+	  break;
     /* \todo extend handler as needed */
    } /* switch */
 }
