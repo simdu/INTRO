@@ -23,6 +23,9 @@ static void AppTask(void* param) {
 	#if PL_CONFIG_HAS_EVENTS
 		EVNT_HandleEvent(APP_EventHandler, TRUE);
 	#endif
+	#if PL_CONFIG_HAS_DEBOUNCE
+	  KEYDBNC_Process();
+	#endif
 
     /* \todo handle your application code here */
     FRTOS1_vTaskDelay(pdMS_TO_TICKS(500));
