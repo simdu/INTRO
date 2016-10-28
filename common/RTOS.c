@@ -11,6 +11,7 @@
 #include "LED.h"
 #include "Event.h"
 #include "Keys.h"
+#include "KeyDebounce.h"
 #include "Application.h"
 
 static void AppTask(void* param) {
@@ -22,6 +23,9 @@ static void AppTask(void* param) {
 	#endif
 	#if PL_CONFIG_HAS_EVENTS
 		EVNT_HandleEvent(APP_EventHandler, TRUE);
+	#endif
+	#if PL_CONFIG_HAS_DEBOUNCE
+	  KEYDBNC_Process();
 	#endif
 
     /* \todo handle your application code here */

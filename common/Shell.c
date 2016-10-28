@@ -163,9 +163,9 @@ void SHELL_SendString(unsigned char *msg) {
  * \return ERR_OK or failure code
  */
 static uint8_t SHELL_PrintHelp(const CLS1_StdIOType *io) {
-  CLS1_SendHelpStr("Shell", "Shell commands\r\n", io->stdOut);
-  CLS1_SendHelpStr("  help|status", "Print help or status information\r\n", io->stdOut);
-  CLS1_SendHelpStr("  val <num>", "Assign number value\r\n", io->stdOut);
+  CLS1_SendHelpStr((unsigned char*)("Shell"),(unsigned char*)("Shell commands\r\n"), io->stdOut);
+  CLS1_SendHelpStr((unsigned char*)("  help|status"), (unsigned char*)("Print help or status information\r\n"), io->stdOut);
+  CLS1_SendHelpStr((unsigned char*)("  val <num>"),(unsigned char*)("Assign number value\r\n"), io->stdOut);
   return ERR_OK;
 }
 
@@ -177,15 +177,15 @@ static uint8_t SHELL_PrintHelp(const CLS1_StdIOType *io) {
 static uint8_t SHELL_PrintStatus(const CLS1_StdIOType *io) {
   uint8_t buf[16];
 
-  CLS1_SendStatusStr("Shell", "\r\n", io->stdOut);
+  CLS1_SendStatusStr((unsigned char*)("Shell"),(unsigned char*)("\r\n"), io->stdOut);
   UTIL1_Num32sToStr(buf, sizeof(buf), SHELL_val);
-  UTIL1_strcat(buf, sizeof(buf), "\r\n");
-  CLS1_SendStatusStr("  val", buf, io->stdOut);
+  UTIL1_strcat(buf, sizeof(buf), (unsigned char*)("\r\n"));
+  CLS1_SendStatusStr((unsigned char*)("  val"), buf, io->stdOut);
   return ERR_OK;
 }
 
 static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOType *io) {
-  uint32_t val;
+	int32_t val;
   const unsigned char *p;
 
   if (UTIL1_strcmp((char*)cmd, CLS1_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, "Shell help")==0) {
@@ -194,7 +194,7 @@ static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const
   } else if (UTIL1_strcmp((char*)cmd, CLS1_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, "Shell status")==0) {
     *handled = TRUE;
     return SHELL_PrintStatus(io);
-  } else if (UTIL1_strncmp(cmd, "Shell val ", sizeof("Shell val ")-1)==0) {
+  } else if (UTIL1_strncmp((char*)cmd, (const char*)("Shell val "), sizeof((const char*)("Shell val "))-1)==0) {
     p = cmd+sizeof("Shell val ")-1;
     if (UTIL1_xatoi(&p, &val)==ERR_OK) {
       SHELL_val = val;
