@@ -146,28 +146,8 @@ void APP_Start(void) {
 #endif
 #endif
   PL_Init();
-#if PL_CONFIG_HAS_EVENTS
-  EVNT_SetEvent(EVNT_STARTUP);
-#endif
-#if PL_CONFIG_HAS_SHELL && CLS1_DEFAULT_SERIAL
-  CLS1_SendStr((uint8_t*)"Hello World!\r\n", CLS1_GetStdio()->stdOut);
-#endif
   APP_AdoptToHardware();
-#if PL_CONFIG_HAS_RTOS
-  vTaskStartScheduler(); /* start the RTOS, create the IDLE task and run my tasks (if any) */
-  /* does usually not return! */
-#else
-  //EVNT_SetEvent(EVNT_STARTUP);
-  for(;;) {
-#if PL_CONFIG_HAS_KEYS
-    KEY_Scan();
-#endif
-#if PL_CONFIG_HAS_EVENTS
-    EVNT_HandleEvent(APP_EventHandler, TRUE);
-#endif
-    WAIT1_Waitms(25); /* just wait for some arbitrary time .... */
-  }
-#endif
+
 }
 
 
