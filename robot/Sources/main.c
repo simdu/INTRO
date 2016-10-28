@@ -52,6 +52,7 @@
 #include "TI1.h"
 #include "TimerIntLdd1.h"
 #include "RTT1.h"
+#include "SYS1.h"
 #include "KIN1.h"
 #include "WAIT1.h"
 #include "CS1.h"
