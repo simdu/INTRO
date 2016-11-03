@@ -65,14 +65,6 @@ void RTOS_Init(void) {
     for(;;){} /* error case only, stay here! */
   }
 
-  if (FRTOS1_xTaskCreate(LedTask, (signed portCHAR *)"LED1Task", configMINIMAL_STACK_SIZE, (void*)&led1, tskIDLE_PRIORITY, NULL) != pdPASS) {
-    for(;;){} /* error case only, stay here! */
-  }
-
-  if (FRTOS1_xTaskCreate(LedTask, (signed portCHAR *)"LED2Task", configMINIMAL_STACK_SIZE, (void*)&led2, tskIDLE_PRIORITY, NULL) != pdPASS) {
-    for(;;){} /* error case only, stay here! */
-  }
-
   vTaskStartScheduler(); /* start the RTOS, create the IDLE task and run my tasks (if any) */
   /* does usually not return! */
 }

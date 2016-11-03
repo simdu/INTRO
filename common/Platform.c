@@ -98,9 +98,6 @@ void PL_Init(void) {
 #if PL_CONFIG_HAS_DEBOUNCE
   KEYDBNC_Init();
 #endif
-#if PL_CONFIG_HAS_RTOS
-  RTOS_Init();
-#endif
 #if PL_CONFIG_HAS_SHELL
   SHELL_Init();
 #endif
@@ -145,6 +142,9 @@ void PL_Init(void) {
 #endif
 #if PL_CONFIG_HAS_LCD
   LCD_Init();
+#endif
+#if PL_CONFIG_HAS_RTOS
+  RTOS_Init();
 #endif
 }
 
