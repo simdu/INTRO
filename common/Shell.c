@@ -74,7 +74,78 @@
 #if PL_CONFIG_HAS_LINE_MAZE
   #include "Maze.h"
 #endif
+#if PL_CONFIG_HAS_USB_CDC
+  #include "CDC1.h"
+#endif
 #include "KIN1.h"
+
+#define SHELL_HANDLER_ARRAY   1
+#define SHELL_CONFIG_HAS_SHELL_EXTRA_CDC   (0 && PL_CONFIG_HAS_USB_CDC)
+#define SHELL_CONFIG_HAS_SHELL_EXTRA_RTT   (1 && PL_CONFIG_HAS_SEGGER_RTT)
+#define SHELL_CONFIG_HAS_SHELL_EXTRA_BT    (0 && PL_CONFIG_HAS_BLUETOOTH)
+#define SHELL_CONFIG_HAS_SHELL_EXTRA_UART  (0)
+
+
+#if SHELL_HANDLER_ARRAY
+typedef struct {
+  CLS1_ConstStdIOType *stdio;
+  unsigned char *buf;
+  size_t bufSize;
+} SHELL_IODesc;
+
+#if CLS1_DEFAULT_SERIAL && (SHELL_CONFIG_HAS_SHELL_EXTRA_CDC || SHELL_CONFIG_HAS_SHELL_EXTRA_RTT)
+  static void SHELL_SendChar(uint8_t ch) {
+    /* everything sent to the standard I/O will be sent to additional channels */
+    CLS1_SendChar(ch);
+  #if SHELL_CONFIG_HAS_SHELL_EXTRA_CDC
+    CDC1_SendChar(ch); /* copy on CDC */
+  #endif
+  #if SHELL_CONFIG_HAS_SHELL_EXTRA_RTT
+    RTT1_SendChar(ch); /* copy on RTT */
+  #endif
+  }
+
+  /* copy on other I/Os */
+  CLS1_ConstStdIOType SHELL_stdio =
+  {
+    (CLS1_StdIO_In_FctType)CLS1_ReadChar, /* stdin */
+    (CLS1_StdIO_OutErr_FctType)SHELL_SendChar, /* stdout */
+    (CLS1_StdIO_OutErr_FctType)SHELL_SendChar, /* stderr */
+    CLS1_KeyPressed /* if input is not empty */
+  };
+
+  CLS1_ConstStdIOType *SHELL_GetStdio(void) {
+    return &SHELL_stdio;
+  }
+#else
+  CLS1_ConstStdIOType *SHELL_GetStdio(void) {
+    return CLS1_GetStdio();
+  }
+#endif
+
+static const SHELL_IODesc ios[] =
+{
+#if CLS1_DEFAULT_SERIAL && (SHELL_CONFIG_HAS_SHELL_EXTRA_CDC || SHELL_CONFIG_HAS_SHELL_EXTRA_RTT)
+    /* use special stdio to copy to other channels */
+    {&SHELL_stdio, CLS1_DefaultShellBuffer, sizeof(CLS1_DefaultShellBuffer)},
+#elif CLS1_DEFAULT_SERIAL /* default Shell communication channel */
+    {&CLS1_stdio, CLS1_DefaultShellBuffer, sizeof(CLS1_DefaultShellBuffer)},
+#endif
+#if SHELL_CONFIG_HAS_SHELL_EXTRA_RTT
+    {&RTT1_stdio, RTT1_DefaultShellBuffer, sizeof(RTT1_DefaultShellBuffer)},
+#endif
+#if SHELL_CONFIG_HAS_SHELL_EXTRA_UART
+    {&AS1_stdio, AS1_DefaultShellBuffer, sizeof(AS1_DefaultShellBuffer)},
+#endif
+#if SHELL_CONFIG_HAS_SHELL_EXTRA_CDC
+    {&CDC1_stdio, CDC1_DefaultShellBuffer, sizeof(CDC1_DefaultShellBuffer)},
+#endif
+#if SHELL_CONFIG_HAS_SHELL_EXTRA_BT
+    {&BT1_stdio, BT1_DefaultShellBuffer, sizeof(BT1_DefaultShellBuffer)},
+#endif
+};
+
+#endif
 
 /* forward declaration */
 static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOType *io);
@@ -163,9 +234,9 @@ void SHELL_SendString(unsigned char *msg) {
  * \return ERR_OK or failure code
  */
 static uint8_t SHELL_PrintHelp(const CLS1_StdIOType *io) {
-  CLS1_SendHelpStr((unsigned char*)("Shell"),(unsigned char*)("Shell commands\r\n"), io->stdOut);
-  CLS1_SendHelpStr((unsigned char*)("  help|status"), (unsigned char*)("Print help or status information\r\n"), io->stdOut);
-  CLS1_SendHelpStr((unsigned char*)("  val <num>"),(unsigned char*)("Assign number value\r\n"), io->stdOut);
+  CLS1_SendHelpStr("Shell", "Shell commands\r\n", io->stdOut);
+  CLS1_SendHelpStr("  help|status", "Print help or status information\r\n", io->stdOut);
+  CLS1_SendHelpStr("  val <num>", "Assign number value\r\n", io->stdOut);
   return ERR_OK;
 }
 
@@ -177,15 +248,15 @@ static uint8_t SHELL_PrintHelp(const CLS1_StdIOType *io) {
 static uint8_t SHELL_PrintStatus(const CLS1_StdIOType *io) {
   uint8_t buf[16];
 
-  CLS1_SendStatusStr((unsigned char*)("Shell"),(unsigned char*)("\r\n"), io->stdOut);
+  CLS1_SendStatusStr("Shell", "\r\n", io->stdOut);
   UTIL1_Num32sToStr(buf, sizeof(buf), SHELL_val);
-  UTIL1_strcat(buf, sizeof(buf), (unsigned char*)("\r\n"));
-  CLS1_SendStatusStr((unsigned char*)("  val"), buf, io->stdOut);
+  UTIL1_strcat(buf, sizeof(buf), "\r\n");
+  CLS1_SendStatusStr("  val", buf, io->stdOut);
   return ERR_OK;
 }
 
 static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOType *io) {
-	int32_t val;
+  uint32_t val;
   const unsigned char *p;
 
   if (UTIL1_strcmp((char*)cmd, CLS1_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, "Shell help")==0) {
@@ -194,7 +265,7 @@ static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const
   } else if (UTIL1_strcmp((char*)cmd, CLS1_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, "Shell status")==0) {
     *handled = TRUE;
     return SHELL_PrintStatus(io);
-  } else if (UTIL1_strncmp((char*)cmd, (const char*)("Shell val "), sizeof((const char*)("Shell val "))-1)==0) {
+  } else if (UTIL1_strncmp(cmd, "Shell val ", sizeof("Shell val ")-1)==0) {
     p = cmd+sizeof("Shell val ")-1;
     if (UTIL1_xatoi(&p, &val)==ERR_OK) {
       SHELL_val = val;
@@ -206,65 +277,31 @@ static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const
   return ERR_OK;
 }
 
-void SHELL_ParseCmd(unsigned char *cmd) {
-  #if CLS1_DEFAULT_SERIAL
-    (void)CLS1_ParseWithCommandTable(cmd, CLS1_GetStdio(), CmdParserTable);
-  #endif
-  /* \todo Extend as needed */
-}
-
 #if PL_CONFIG_HAS_RTOS
 static void ShellTask(void *pvParameters) {
+#if SHELL_HANDLER_ARRAY
+  int i;
+#endif
   /* \todo Extend as needed */
-#define DEFAULT_BUF_SIZE 48
-#if CLS1_DEFAULT_SERIAL
-  static unsigned char localConsole_buf[DEFAULT_BUF_SIZE];
-#endif
-#if PL_CONFIG_HAS_BLUETOOTH
-  static unsigned char bluetooth_buf[DEFAULT_BUF_SIZE];
-#endif
-#if PL_CONFIG_HAS_SEGGER_RTT
-  static unsigned char rtt_buf[DEFAULT_BUF_SIZE];
-#endif
-#if CLS1_DEFAULT_SERIAL
-  CLS1_ConstStdIOTypePtr ioLocal = CLS1_GetStdio();  
-#endif
-#if PL_CONFIG_HAS_RADIO && RNET_CONFIG_REMOTE_STDIO
-  static unsigned char radio_cmd_buf[48];
-  CLS1_ConstStdIOType *ioRemote = RSTDIO_GetStdioRx();
-#endif
 
   (void)pvParameters; /* not used */
-#if PL_CONFIG_HAS_BLUETOOTH
-  bluetooth_buf[0] = '\0';
-#endif
-#if PL_CONFIG_HAS_SEGGER_RTT
-  rtt_buf[0] = '\0';
-#endif
-#if CLS1_DEFAULT_SERIAL
-  localConsole_buf[0] = '\0';
-#endif
-#if PL_CONFIG_HAS_RADIO && RNET_CONFIG_REMOTE_STDIO
-  radio_cmd_buf[0] = '\0';
+#if SHELL_HANDLER_ARRAY
+  /* initialize buffers */
+  for(i=0;i<sizeof(ios)/sizeof(ios[0]);i++) {
+    ios[i].buf[0] = '\0';
+  }
 #endif
 #if CLS1_DEFAULT_SERIAL
-  (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, ioLocal, CmdParserTable);
-#endif
-  for(;;) {
-#if CLS1_DEFAULT_SERIAL
-    (void)CLS1_ReadAndParseWithCommandTable(localConsole_buf, sizeof(localConsole_buf), ioLocal, CmdParserTable);
-#endif
-#if PL_CONFIG_HAS_BLUETOOTH
-    (void)CLS1_ReadAndParseWithCommandTable(bluetooth_buf, sizeof(bluetooth_buf), &BT_stdio, CmdParserTable);
-#endif
-#if PL_CONFIG_HAS_SEGGER_RTT
-    (void)CLS1_ReadAndParseWithCommandTable(rtt_buf, sizeof(rtt_buf), &RTT_stdio, CmdParserTable);
-#endif
-#if PL_CONFIG_HAS_RADIO && RNET_CONFIG_REMOTE_STDIO
-    RSTDIO_Print(ioLocal); /* dispatch incoming messages */
-    (void)CLS1_ReadAndParseWithCommandTable(radio_cmd_buf, sizeof(radio_cmd_buf), ioRemote, CmdParserTable);
+  (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, ios[0].stdio, CmdParserTable);
 #endif
 
+  for(;;) {
+#if SHELL_HANDLER_ARRAY
+    /* process all I/Os */
+    for(i=0;i<sizeof(ios)/sizeof(ios[0]);i++) {
+      (void)CLS1_ReadAndParseWithCommandTable(ios[i].buf, ios[i].bufSize, ios[i].stdio, CmdParserTable);
+    }
+#endif
 #if PL_CONFIG_HAS_SHELL_QUEUE
 #if PL_CONFIG_SQUEUE_SINGLE_CHAR
     {
