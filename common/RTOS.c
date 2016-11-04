@@ -33,27 +33,9 @@ static void AppTask(void* param) {
   }
 }
 
-static void LedTask(void* param) {
-  const int *whichLED = (int*)param;
-
-  (void)param; /* avoid compiler warning */
-  for(;;) {
-    if (*whichLED==1) {
-      LED1_Neg();
-    } else if (*whichLED==2) {
-      LED2_Neg();
-    }
-    /* \todo handle your application code here */
-    FRTOS1_vTaskDelay(pdMS_TO_TICKS(500));
-  }
-}
-
 
 
 void RTOS_Init(void) {
-  static const int led1 = 1;
-  static const int led2 = 2;
-
   #if PL_CONFIG_HAS_EVENTS
   	  EVNT_SetEvent(EVNT_STARTUP);
   #endif
