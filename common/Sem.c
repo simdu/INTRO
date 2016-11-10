@@ -33,6 +33,9 @@ static void vSlaveTask(void *pvParameters) {
   }
   for(;;) {
     /*! \todo Implement functionality */
+	  if(xSemaphoreTakeRecursive(sem, portMAX_DELAY)==pdPASS){;
+	  	  LED1_Neg();
+	  }
   }
 }
 

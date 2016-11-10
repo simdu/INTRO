@@ -15,6 +15,7 @@
 #include "Keys.h"
 #include "KeyDebounce.h"
 #include "KIN1.h"
+#include "Sem.h"
 #if PL_CONFIG_HAS_SHELL
   #include "CLS1.h"
 #endif
