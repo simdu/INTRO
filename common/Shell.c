@@ -80,8 +80,8 @@
 #include "KIN1.h"
 
 #define SHELL_HANDLER_ARRAY   1
-#define SHELL_CONFIG_HAS_SHELL_EXTRA_CDC   (0 && PL_CONFIG_HAS_USB_CDC)
-#define SHELL_CONFIG_HAS_SHELL_EXTRA_RTT   (1 && PL_CONFIG_HAS_SEGGER_RTT)
+#define SHELL_CONFIG_HAS_SHELL_EXTRA_CDC   (1 && PL_CONFIG_HAS_USB_CDC)
+#define SHELL_CONFIG_HAS_SHELL_EXTRA_RTT   (0 && PL_CONFIG_HAS_SEGGER_RTT)
 #define SHELL_CONFIG_HAS_SHELL_EXTRA_BT    (0 && PL_CONFIG_HAS_BLUETOOTH)
 #define SHELL_CONFIG_HAS_SHELL_EXTRA_UART  (0)
 
@@ -114,6 +114,14 @@ typedef struct {
     CLS1_KeyPressed /* if input is not empty */
   };
 
+  CLS1_ConstStdIOType CDC_stdio =
+  {
+    (CLS1_StdIO_In_FctType)CDC1_StdIOReadChar, /* stdin */
+    (CLS1_StdIO_OutErr_FctType)SHELL_SendChar, /* stdout */
+    (CLS1_StdIO_OutErr_FctType)SHELL_SendChar, /* stderr */
+	CDC1_StdIOKeyPressed /* if input is not empty */
+  };
+
   CLS1_ConstStdIOType *SHELL_GetStdio(void) {
     return &SHELL_stdio;
   }
@@ -138,7 +146,7 @@ static const SHELL_IODesc ios[] =
     {&AS1_stdio, AS1_DefaultShellBuffer, sizeof(AS1_DefaultShellBuffer)},
 #endif
 #if SHELL_CONFIG_HAS_SHELL_EXTRA_CDC
-    {&CDC1_stdio, CDC1_DefaultShellBuffer, sizeof(CDC1_DefaultShellBuffer)},
+    {&CDC_stdio, CDC1_DefaultShellBuffer, sizeof(CDC1_DefaultShellBuffer)},
 #endif
 #if SHELL_CONFIG_HAS_SHELL_EXTRA_BT
     {&BT1_stdio, BT1_DefaultShellBuffer, sizeof(BT1_DefaultShellBuffer)},
