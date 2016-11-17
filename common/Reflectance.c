@@ -61,7 +61,7 @@ typedef struct SensorFctType_ {
 } SensorFctType;
 
 typedef uint16_t SensorTimeType;
-#define MAX_SENSOR_VALUE  ((SensorTimeType)-1)
+#define MAX_SENSOR_VALUE  0x5000//((SensorTimeType)-1)
 
 /* calibration min/max values */
 typedef struct SensorCalibT_ {
@@ -171,7 +171,7 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
         cnt++;
       }
     }
-  } while((cnt!=REF_NOF_SENSORS) );//&& (timerVal < 0x6000)
+  } while((cnt!=REF_NOF_SENSORS) && (timerVal < 0x3E00));
   CS1_ExitCritical();
   LED_IR_Off(); /* IR LED's off */
   xSemaphoreGive(REF_DataSem);
