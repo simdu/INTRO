@@ -23,6 +23,7 @@
 #include "Application.h"
 #include "Event.h"
 #include "Shell.h"
+#include "CS1.h"
 #if PL_CONFIG_HAS_BUZZER
   #include "Buzzer.h"
 #endif
@@ -39,7 +40,7 @@
 #if REF_START_STOP_CALIB
   static xSemaphoreHandle REF_StartStopSem = NULL;
 #endif
-
+  static xSemaphoreHandle REF_DataSem = NULL;
 typedef enum {
   REF_STATE_INIT,
   REF_STATE_NOT_CALIBRATED,
@@ -140,8 +141,11 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
   uint8_t cnt; /* number of sensor */
   uint8_t i;
   RefCnt_TValueType timerVal;
+  CS1_CriticalVariable();
   /*! \todo Consider reentrancy and mutual exclusion! */
-
+  if(xSemaphoreTake(REF_DataSem, portMAX_DELAY) == pdFALSE){
+	  for(;;);
+  }
   LED_IR_On(); /* IR LED's on */
   WAIT1_Waitus(200);
   for(i=0;i<REF_NOF_SENSORS;i++) {
@@ -150,6 +154,7 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
     raw[i] = MAX_SENSOR_VALUE;
   }
   WAIT1_Waitus(50); /* give at least 10 us to charge the capacitor */
+  CS1_EnterCritical();
   for(i=0;i<REF_NOF_SENSORS;i++) {
     SensorFctArray[i].SetInput(); /* turn I/O line as input */
   }
@@ -166,8 +171,10 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
         cnt++;
       }
     }
-  } while(cnt!=REF_NOF_SENSORS);
+  } while((cnt!=REF_NOF_SENSORS) );//&& (timerVal < 0x6000)
+  CS1_ExitCritical();
   LED_IR_Off(); /* IR LED's off */
+  xSemaphoreGive(REF_DataSem);
 }
 
 static void REF_CalibrateMinMax(SensorTimeType min[REF_NOF_SENSORS], SensorTimeType max[REF_NOF_SENSORS], SensorTimeType raw[REF_NOF_SENSORS]) {
@@ -590,6 +597,12 @@ void REF_Init(void) {
   (void)FRTOS1_xSemaphoreTake(REF_StartStopSem, 0); /* empty token */
   FRTOS1_vQueueAddToRegistry(REF_StartStopSem, "RefStartStopSem");
 #endif
+  FRTOS1_vSemaphoreCreateBinary(REF_DataSem);
+  if (REF_StartStopSem==NULL) { /* semaphore creation failed */
+    for(;;){} /* error */
+  }
+  FRTOS1_vQueueAddToRegistry(REF_DataSem, "REF_DataSem");
+  xSemaphoreGive(REF_DataSem);
   refState = REF_STATE_INIT;
   timerHandle = RefCnt_Init(NULL);
   /*! \todo You might need to adjust priority or other task settings */
