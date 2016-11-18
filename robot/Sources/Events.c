@@ -30,6 +30,8 @@
 #include "Events.h"
 #include "Event.h"
 #include "Timer.h"
+#include "Q4CLeft.h"
+#include "Q4CRight.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -199,7 +201,8 @@ void FRTOS1_vApplicationMallocFailedHook(void)
 */
 void QuadInt_OnInterrupt(void)
 {
-  /* Write your code here ... */
+	Q4CLeft_Sample();
+	Q4CRight_Sample();
 }
 
 /* END Events */
