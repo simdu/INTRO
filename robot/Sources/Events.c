@@ -78,6 +78,9 @@ void TI1_OnInterrupt(void)
     #ifndef PL_LOCAL_CONFIG_HAS_TIMER_DISABLED
 	TMR_OnInterrupt();
     #endif
+    #ifndef PL_LOCAL_CONFIG_HAS_DRIVE_DISABLED
+	TACHO_Sample();
+	#endif
 }
 
 /*
@@ -139,7 +142,7 @@ void FRTOS1_vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 */
 void FRTOS1_vApplicationTickHook(void)
 {
-	TACHO_Sample();
+
 }
 
 /*
