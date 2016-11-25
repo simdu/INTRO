@@ -95,6 +95,8 @@
 #include "TimerIntLdd2.h"
 #include "TU_QuadInt.h"
 #include "KIN1.h"
+#include "IFsh1.h"
+#include "IntFlashLdd1.h"
 #include "USB1.h"
 #include "CDC1.h"
 #include "Tx1.h"
