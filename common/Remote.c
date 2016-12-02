@@ -280,12 +280,12 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
       val = *data; /* get data value */
 #if PL_CONFIG_HAS_SHELL && PL_CONFIG_HAS_BUZZER && PL_CONFIG_HAS_REMOTE
       if (val=='F') { /* F button, disable remote */
-        SHELL_ParseCmd((unsigned char*)"buzzer buz 300 500");
+        //SHELL_ParseCmd((unsigned char*)"buzzer buz 300 500");
         REMOTE_SetOnOff(FALSE);
         DRV_SetSpeed(0,0); /* turn off motors */
         SHELL_SendString("Remote OFF\r\n");
       } else if (val=='G') { /* center joystick button: enable remote */
-        SHELL_ParseCmd((unsigned char*)"buzzer buz 300 1000");
+        //SHELL_ParseCmd((unsigned char*)"buzzer buz 300 1000");
         REMOTE_SetOnOff(TRUE);
         DRV_SetMode(DRV_MODE_SPEED);
         SHELL_SendString("Remote ON\r\n");
