@@ -100,6 +100,27 @@ static uint8_t REMOTE_GetXY(uint16_t *x, uint16_t *y, int8_t *x8, int8_t *y8) {
   return ERR_OK;
 }
 
+void REMOTE_SetDriveMode(void)
+ {
+	uint8_t buf = RAPP_BTN_MSG_DRIVE;
+	RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_BTN,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+ }
+void REMOTE_StartCalib(void)
+ {
+	uint8_t buf = RAPP_BTN_MSG_CALIB;
+	 RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_BTN,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+ }
+void REMOTE_Stop(void)
+ {
+	uint8_t buf = RAPP_BTN_MSG_STOP;
+	 RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_BTN,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+ }
+void REMOTE_Horn(void)
+ {
+	 uint8_t buf = RAPP_BTN_MSG_HORN;
+	 RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_BTN,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+ }
+
 static void RemoteTask (void *pvParameters) {
   (void)pvParameters;
 #if PL_CONFIG_HAS_JOYSTICK
@@ -110,12 +131,15 @@ static void RemoteTask (void *pvParameters) {
     if (REMOTE_isOn) {
 #if PL_CONFIG_HAS_JOYSTICK
       if (REMOTE_useJoystick) {
+    	static int8_t oldx8 = 0;
+    	static int8_t oldy8 = 0;
         uint8_t buf[2];
         int16_t x, y;
         int8_t x8, y8;
 
         /* send periodically messages */
         REMOTE_GetXY(&x, &y, &x8, &y8);
+        if(x8 != oldx8 || y8 != oldy8){
         buf[0] = x8;
         buf[1] = y8;
         if (REMOTE_isVerbose) {
@@ -137,6 +161,9 @@ static void RemoteTask (void *pvParameters) {
         (void)RAPP_SendPayloadDataBlock(buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_XY, RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
         LED1_Neg();
       }
+        oldx8 = x8;
+        oldy8 = y8;
+     }
 #endif
       FRTOS1_vTaskDelay(200/portTICK_PERIOD_MS);
     } else {
@@ -403,7 +430,7 @@ void REMOTE_Deinit(void) {
 
 /*! \brief Initializes module */
 void REMOTE_Init(void) {
-  REMOTE_isOn = TRUE;
+  //REMOTE_isOn = TRUE;
   REMOTE_isVerbose = FALSE;
   REMOTE_useJoystick = TRUE;
 #if PL_CONFIG_CONTROL_SENDER
