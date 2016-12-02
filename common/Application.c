@@ -63,8 +63,8 @@ void APP_EventHandler(EVNT_Handle event) {
 		LED1_Neg();
 		//CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
 		SHELL_SendString((unsigned char*)("SW1 pressed\r\n"));
-		#if PL_CONFIG_HAS_BUZZER
-		BUZ_PlayTune(BUZ_TUNE_BUTTON);
+		#if PL_CONFIG_HAS_LINE_FOLLOW
+		LF_StartFollowing();
 		#endif
 	break;
 	#endif

@@ -80,7 +80,11 @@ static bool FollowSegment(void) {
   if (currLineKind==REF_LINE_STRAIGHT) {
     PID_Line(currLine, REF_MIDDLE_LINE_VALUE); /* move along the line */
     return TRUE;
-  } else {
+  } else if(currLineKind == REF_LINE_FULL) {
+	  LF_currState = STATE_FINISHED;
+	  return TRUE;
+  }
+  else {
     return FALSE; /* intersection/change of direction or not on line any more */
   }
 }
@@ -88,6 +92,7 @@ static bool FollowSegment(void) {
 static void StateMachine(void) {
   switch (LF_currState) {
     case STATE_IDLE:
+
       break;
     case STATE_FOLLOW_SEGMENT:
       if (!FollowSegment()) {
@@ -95,28 +100,39 @@ static void StateMachine(void) {
         LF_currState = STATE_TURN; /* make turn */
         SHELL_SendString((unsigned char*)"no line, turn..\r\n");
     #else
-        LF_currState = STATE_STOP; /* stop if we do not have a line any more */
-        SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
+	#if PL_CONFIG_HAS_TURN
+        DRV_SetMode(DRV_MODE_POS);
+	    TURN_Turn(TURN_RIGHT180, NULL);
+		LF_currState = STATE_TURN; /* make turn */
+	#else
+		LF_currState = STATE_STOP; /* stop if we do not have a line any more */
+		SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
+	#endif
     #endif
       }
       break;
 
     case STATE_TURN:
-      #if PL_CONFIG_HAS_LINE_MAZE
-      /*! \todo Handle maze turning */
-      #endif /* PL_CONFIG_HAS_LINE_MAZE */
+	  #if PL_CONFIG_HAS_LINE_MAZE
+	  /*! \todo Handle maze turning */
+	  #endif
+	  #if PL_CONFIG_HAS_TURN
+    	  if(DRV_HasTurned()){
+        	  DRV_SetMode(DRV_MODE_NONE);
+    		  LF_currState = STATE_FOLLOW_SEGMENT;
+    	  }
+      #endif
       break;
 
     case STATE_FINISHED:
       #if PL_CONFIG_HAS_LINE_MAZE
       /*! \todo Handle maze finished */
       #endif /* PL_CONFIG_HAS_LINE_MAZE */
+      DRV_SetMode(DRV_MODE_STOP);
       break;
     case STATE_STOP:
       SHELL_SendString("Stopped!\r\n");
-#if PL_CONFIG_HAS_TURN
-      TURN_Turn(TURN_STOP, NULL);
-#endif
+      DRV_SetMode(DRV_MODE_STOP);
       LF_currState = STATE_IDLE;
       break;
   } /* switch */
