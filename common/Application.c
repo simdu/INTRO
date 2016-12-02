@@ -16,6 +16,7 @@
 #include "KeyDebounce.h"
 #include "KIN1.h"
 #include "Sem.h"
+#include "Remote.h"
 #if PL_CONFIG_HAS_SHELL
   #include "CLS1.h"
 #endif
@@ -60,9 +61,7 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_HAS_KEYS
 	#if PL_CONFIG_NOF_KEYS>=1
 	case EVNT_SW1_PRESSED:
-		LED1_Neg();
-		//CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
-		SHELL_SendString((unsigned char*)("SW1 pressed\r\n"));
+		REMOTE_Horn();
 		#if PL_CONFIG_HAS_LINE_FOLLOW
 		LF_StartFollowing();
 		#endif
@@ -75,7 +74,8 @@ void APP_EventHandler(EVNT_Handle event) {
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=3
 	case EVNT_SW3_PRESSED:
-		SHELL_SendString("SW3 pressed\r\n");
+		REMOTE_StartCalib();
+		SHELL_SendString("Remote Calib\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=4
@@ -85,17 +85,21 @@ void APP_EventHandler(EVNT_Handle event) {
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=5
 	case EVNT_SW5_PRESSED:
-		SHELL_SendString("SW5 pressed\r\n");
+		REMOTE_SetOnOff(TRUE);
+		SHELL_SendString("Remote ON\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=6
 	case EVNT_SW6_PRESSED:
-		SHELL_SendString("SW6 pressed\r\n");
+		REMOTE_Stop();
+        REMOTE_SetOnOff(FALSE);
+		SHELL_SendString("Remote OFF\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=7
 	case EVNT_SW7_PRESSED:
-		SHELL_SendString("SW7 pressed\r\n");
+        REMOTE_SetDriveMode();
+    	SHELL_SendString("Remote Drive\r\n");
 		break;
 	#endif
 #endif /* PL_CONFIG_HAS_KEYS */
