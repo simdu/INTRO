@@ -35,6 +35,12 @@
 #if PL_CONFIG_HAS_SHELL
   #include "Shell.h"
 #endif
+#if PL_CONFIG_HAS_REFLECTANCE
+	#include "Reflectance.h"
+#endif
+#if PL_CONFIG_HAS_BUZZER
+	#include "Buzzer.h"
+#endif
 
 static bool REMOTE_isOn = FALSE;
 static bool REMOTE_isVerbose = FALSE;
@@ -207,19 +213,19 @@ static void REMOTE_HandleMotorMsg(int16_t speedVal, int16_t directionVal, int16_
 #endif
 
 #if PL_CONFIG_HAS_MOTOR
-static int16_t scaleJoystickTo1K(int8_t val) {
-  /* map speed from -128...127 to -1000...+1000 */
+static int16_t scaleJoystickTo4K(int8_t val) {
+  /* map speed from -128...127 to -4000...+4000 */
   int tmp;
 
   if (val>0) {
-    tmp = ((val*10)/127)*100;
+    tmp = ((val*10)/127)*400;
   } else {
-    tmp = ((val*10)/128)*100;
+    tmp = ((val*10)/128)*400;
   }
-  if (tmp<-1000) {
-    tmp = -1000;
-  } else if (tmp>1000) {
-    tmp = 1000;
+  if (tmp<-4000) {
+    tmp = -4000;
+  } else if (tmp>4000) {
+    tmp = 4000;
   }
   return tmp;
 }
@@ -267,8 +273,8 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         if (y>-5 && y<5) {
           y = 0;
         }
-        x1000 = scaleJoystickTo1K(x);
-        y1000 = scaleJoystickTo1K(y);
+        x1000 = scaleJoystickTo4K(x);
+        y1000 = scaleJoystickTo4K(y);
         if (REMOTE_useJoystick) {
           REMOTE_HandleMotorMsg(y1000, x1000, 0); /* first param is forward/backward speed, second param is direction */
         }
@@ -289,10 +295,10 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         REMOTE_SetOnOff(TRUE);
         DRV_SetMode(DRV_MODE_SPEED);
         SHELL_SendString("Remote ON\r\n");
-      } else if (val=='C') { /* red 'C' button */
-        /*! \todo add functionality */
-      } else if (val=='A') { /* green 'A' button */
-        /*! \todo add functionality */
+      } else if (val=='C') { /* red 'C' button calibrate reflectance sensors*/
+    	 REF_CalibrateStartStop();
+      } else if (val=='A') { /* green 'A' button hooorn */
+    	BUZ_PlayTune(BUZ_TUNE_WELCOME);
       }
 #else
       *handled = FALSE; /* no shell and no buzzer? */
