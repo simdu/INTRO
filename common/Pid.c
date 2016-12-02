@@ -136,7 +136,7 @@ void PID_LineCfg(uint16_t currLine, uint16_t setLine, PID_Config *config) {
       speedR = speed+pid; /* increase speed */
       speedL = speed-pid; /* decrease speed */
     }
-  } else if (errorPercent <= 70) {
+  } else if (errorPercent <= 50) {
     speed = ((int32_t)config->maxSpeedPercent)*(0xffff/100)*6/10; /* %60 */
     pid = Limit(pid, -speed, speed);
     if (pid<0) { /* turn right */
@@ -455,11 +455,11 @@ void PID_Init(void) {
   speedRightConfig.lastError = 0;
   speedRightConfig.integral = 0;
 
-  lineFwConfig.pFactor100 = 100;
+  lineFwConfig.pFactor100 = 2000;
   lineFwConfig.iFactor100 = 10;
-  lineFwConfig.dFactor100 = 0;
+  lineFwConfig.dFactor100 = 5;
   lineFwConfig.iAntiWindup = 0;
-  lineFwConfig.maxSpeedPercent = 30;
+  lineFwConfig.maxSpeedPercent = 50;
   lineFwConfig.lastError = 0;
   lineFwConfig.integral = 0;
 
