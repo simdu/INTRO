@@ -35,7 +35,8 @@ extern "C" {
 
 
 /* User includes (#include below this line is not maintained by Processor Expert) */
-
+#include "Timer.h"
+#include "Keys.h"
 /*
 ** ===================================================================
 **     Event       :  Cpu_OnNMIINT (module Events)
@@ -52,6 +53,122 @@ extern "C" {
 void Cpu_OnNMIINT(void)
 {
   /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  TI1_OnInterrupt (module Events)
+**
+**     Component   :  TI1 [TimerInt]
+**     Description :
+**         When a timer interrupt occurs this event is called (only
+**         when the component is enabled - <Enable> and the events are
+**         enabled - <EnableEvent>). This event is enabled only if a
+**         <interrupt service/event> is enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void TI1_OnInterrupt(void)
+{
+#if PL_CONFIG_HAS_TIMER
+  TMR_OnInterrupt();
+#endif
+}
+
+/*
+** ===================================================================
+**     Event       :  SW5_OnInterrupt (module Events)
+**
+**     Component   :  SW5 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW5_OnInterrupt(void)
+{
+#if PL_CONFIG_HAS_KBI
+  KEY_OnInterrupt(KEY_BTN5);
+#endif
+}
+
+/*
+** ===================================================================
+**     Event       :  SW4_OnInterrupt (module Events)
+**
+**     Component   :  SW4 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW4_OnInterrupt(void)
+{
+#if PL_CONFIG_HAS_KBI
+  KEY_OnInterrupt(KEY_BTN4);
+#endif
+}
+
+/*
+** ===================================================================
+**     Event       :  SW3_OnInterrupt (module Events)
+**
+**     Component   :  SW3 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW3_OnInterrupt(void)
+{
+#if PL_CONFIG_HAS_KBI
+  KEY_OnInterrupt(KEY_BTN3);
+#endif
+}
+
+/*
+** ===================================================================
+**     Event       :  SW2_OnInterrupt (module Events)
+**
+**     Component   :  SW2 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW2_OnInterrupt(void)
+{
+#if PL_CONFIG_HAS_KBI
+  KEY_OnInterrupt(KEY_BTN2);
+#endif
+}
+
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW1_OnInterrupt(void)
+{
+#if PL_CONFIG_HAS_KBI
+  KEY_OnInterrupt(KEY_BTN1);
+#endif
 }
 
 /*
@@ -97,7 +214,9 @@ void FRTOS1_vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 void FRTOS1_vApplicationTickHook(void)
 {
   /* Called for every RTOS tick. */
-  /* Write your code here ... */
+#if PL_CONFIG_HAS_TIMER
+  TMR_OnInterrupt();
+#endif
 }
 
 /*

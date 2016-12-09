@@ -46,16 +46,34 @@
 #include "BitIoLdd17.h"
 #include "RTT1.h"
 #include "SYS1.h"
+#include "PDC1.h"
+#include "RESpin1.h"
+#include "BitIoLdd4.h"
+#include "SCEpin1.h"
+#include "BitIoLdd5.h"
+#include "D_Cpin1.h"
+#include "BitIoLdd6.h"
+#include "SPI1.h"
+#include "Clock1.h"
+#include "BitIoLdd7.h"
+#include "Output1.h"
+#include "BitIoLdd8.h"
+#include "GDisp1.h"
+#include "GFONT1.h"
+#include "FDisp1.h"
+#include "LCD_LED.h"
+#include "LEDpin2.h"
+#include "BitIoLdd9.h"
 #include "SW1.h"
-#include "BitIoLdd10.h"
+#include "ExtIntLdd1.h"
 #include "SW2.h"
-#include "BitIoLdd11.h"
+#include "ExtIntLdd2.h"
 #include "SW3.h"
-#include "BitIoLdd12.h"
+#include "ExtIntLdd3.h"
 #include "SW4.h"
-#include "BitIoLdd13.h"
+#include "ExtIntLdd4.h"
 #include "SW5.h"
-#include "BitIoLdd14.h"
+#include "ExtIntLdd5.h"
 #include "AS1.h"
 #include "ASerialLdd1.h"
 #include "SW6.h"
@@ -153,6 +171,76 @@ void FRTOS1_vApplicationMallocFailedHook(void);
 **     Description :
 **         If enabled, the RTOS will call this hook in case memory
 **         allocation failed.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void SW5_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW5_OnInterrupt (module Events)
+**
+**     Component   :  SW5 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void SW4_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW4_OnInterrupt (module Events)
+**
+**     Component   :  SW4 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void SW3_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW3_OnInterrupt (module Events)
+**
+**     Component   :  SW3 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void SW2_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW2_OnInterrupt (module Events)
+**
+**     Component   :  SW2 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void SW1_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
