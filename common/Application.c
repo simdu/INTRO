@@ -72,7 +72,10 @@ void APP_EventHandler(EVNT_Handle event) {
 		#if PL_CONFIG_HAS_LINE_FOLLOW
 		LF_StartFollowing();
 		#endif
-		EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+
+		#if PL_CONFIG_HAS_LCD
+				EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+		#endif
 		SHELL_SendString("LCD Right\r\n");
 	break;
 	#endif
