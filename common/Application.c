@@ -68,43 +68,58 @@ void APP_EventHandler(EVNT_Handle event) {
 		#if PL_CONFIG_BOARD_IS_FRDM
 		REMOTE_Horn();
 		#endif
+
 		#if PL_CONFIG_HAS_LINE_FOLLOW
 		LF_StartFollowing();
 		#endif
+		EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+		SHELL_SendString("LCD Right\r\n");
 	break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=2
 	case EVNT_SW2_PRESSED:
-		SHELL_SendString("SW2 pressed\r\n");
+		EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
+		SHELL_SendString("LCD Left\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=3
 	case EVNT_SW3_PRESSED:
+        #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_StartCalib();
-		SHELL_SendString("Remote Calib\r\n");
+        #endif
+		EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
+		SHELL_SendString("LCD Down\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=4
 	case EVNT_SW4_PRESSED:
-		SHELL_SendString("SW4 pressed\r\n");
+		EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
+		SHELL_SendString("LCD Center\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=5
 	case EVNT_SW5_PRESSED:
+        #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_SetOnOff(TRUE);
-		SHELL_SendString("Remote ON\r\n");
+        #endif
+		EVNT_SetEvent(EVNT_LCD_BTN_UP);
+		SHELL_SendString("LCD Up\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=6
 	case EVNT_SW6_PRESSED:
+        #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_Stop();
         REMOTE_SetOnOff(FALSE);
+        #endif
 		SHELL_SendString("Remote OFF\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=7
 	case EVNT_SW7_PRESSED:
+        #if PL_CONFIG_HAS_JOYSTICK
         REMOTE_SetDriveMode();
+        #endif
     	SHELL_SendString("Remote Drive\r\n");
 		break;
 	#endif
