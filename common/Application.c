@@ -41,6 +41,10 @@
   #include "PORT_PDD.h"
 #endif
 
+#if PL_CONFIG_HAS_REFLECTANCE
+  #include "LineFollow.h"
+#endif
+
 #if PL_CONFIG_HAS_EVENTS
 void APP_EventHandler(EVNT_Handle event) {
   switch(event) {
@@ -61,7 +65,9 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_HAS_KEYS
 	#if PL_CONFIG_NOF_KEYS>=1
 	case EVNT_SW1_PRESSED:
+		#if PL_CONFIG_BOARD_IS_FRDM
 		REMOTE_Horn();
+		#endif
 		#if PL_CONFIG_HAS_LINE_FOLLOW
 		LF_StartFollowing();
 		#endif

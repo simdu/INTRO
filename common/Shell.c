@@ -64,6 +64,7 @@
   #include "RApp.h"
   #include "RNet_App.h"
   #include "RNetConf.h"
+  #include "RStdIO.h"
 #endif
 #if RNET_CONFIG_REMOTE_STDIO
   #include "RStdIO.h"
@@ -150,6 +151,9 @@ static const SHELL_IODesc ios[] =
 #endif
 #if SHELL_CONFIG_HAS_SHELL_EXTRA_BT
     {&BT1_stdio, BT1_DefaultShellBuffer, sizeof(BT1_DefaultShellBuffer)},
+#endif
+#if PL_CONFIG_HAS_RADIO
+
 #endif
 };
 
@@ -287,6 +291,9 @@ static uint8_t SHELL_ParseCommand(const unsigned char *cmd, bool *handled, const
 
 #if PL_CONFIG_HAS_RTOS
 static void ShellTask(void *pvParameters) {
+#if PL_CONFIG_HAS_RADIO
+	uint8_t radioCmdBuffer[48];
+#endif
 #if SHELL_HANDLER_ARRAY
   int i;
 #endif
@@ -299,6 +306,9 @@ static void ShellTask(void *pvParameters) {
     ios[i].buf[0] = '\0';
   }
 #endif
+#if PL_CONFIG_HAS_RADIO
+	radioCmdBuffer[0] = '\0';
+#endif
 #if CLS1_DEFAULT_SERIAL
   (void)CLS1_ParseWithCommandTable((unsigned char*)CLS1_CMD_HELP, ios[0].stdio, CmdParserTable);
 #endif
@@ -309,6 +319,10 @@ static void ShellTask(void *pvParameters) {
     for(i=0;i<sizeof(ios)/sizeof(ios[0]);i++) {
       (void)CLS1_ReadAndParseWithCommandTable(ios[i].buf, ios[i].bufSize, ios[i].stdio, CmdParserTable);
     }
+#endif
+#if RNET_CONFIG_REMOTE_STDIO
+    RSTDIO_Print(SHELL_GetStdio());
+    CLS1_ReadAndParseWithCommandTable(radioCmdBuffer, sizeof(radioCmdBuffer), RSTDIO_GetStdioRx(),CmdParserTable);
 #endif
 #if PL_CONFIG_HAS_SHELL_QUEUE
 #if PL_CONFIG_SQUEUE_SINGLE_CHAR
