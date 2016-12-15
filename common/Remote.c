@@ -37,14 +37,23 @@
 #endif
 #if PL_CONFIG_HAS_REFLECTANCE
 	#include "Reflectance.h"
+	#include "LineFollow.h"
 #endif
 #if PL_CONFIG_HAS_BUZZER
 	#include "Buzzer.h"
+#endif
+#if PL_CONFIG_HAS_RADIO
+  #include "RNet_AppConfig.h"
+  #include "RPHY.h"
+  #include "RNet_App.h"
+  #include "RApp.h"
+  #include "Radio.h"
 #endif
 
 static bool REMOTE_isOn = FALSE;
 static bool REMOTE_isVerbose = FALSE;
 static bool REMOTE_useJoystick = TRUE;
+static RACE_STATE state = RACE_START;
 #if PL_CONFIG_HAS_JOYSTICK
 static uint16_t midPointX, midPointY;
 #endif
@@ -325,9 +334,27 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         DRV_SetMode(DRV_MODE_SPEED);
         SHELL_SendString("Remote ON\r\n");
       } else if (val=='C') { /* red 'C' button calibrate reflectance sensors*/
-    	 REF_CalibrateStartStop();
+    	 //REF_CalibrateStartStop();
+    	 //DRV_SetMode(DRV_MODE_STOP);
       } else if (val=='A') { /* green 'A' button hooorn */
-    	BUZ_PlayTune(BUZ_TUNE_WELCOME);
+    	  switch(state){
+			  case RACE_START:
+				  state = RACE_LINE;
+				  SendSignal(RAPP_SIG_A);
+				  break;
+			  case RACE_LINE:
+				  SendSignal(RAPP_SIG_B);
+				  LF_StartFollowing();
+				  state = RACE_STOP;
+				  break;
+			  case RACE_STOP:
+				  SendSignal(RAPP_SIG_C);
+				  state = RACE_START;
+				  break;
+    	  }
+      } else if (val=='B') { /* green 'A' button hooorn */
+      	//BUZ_PlayTune(BUZ_TUNE_WELCOME);
+      	  //send signal B
       }
 #else
       *handled = FALSE; /* no shell and no buzzer? */
@@ -338,6 +365,15 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
       break;
   } /* switch */
   return ERR_OK;
+}
+
+void SendSignal(RAPP_SIG_MSG_t symbol){
+	  uint8_t buf[2];
+	  //RADIO_SetChannel(0);
+	  buf[0]  =  0x01 ;
+	  buf[1]  =  symbol;
+	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+	  //RADIO_SetChannel(95);
 }
 
 #if PL_CONFIG_HAS_JOYSTICK

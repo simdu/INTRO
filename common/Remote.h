@@ -14,6 +14,15 @@
 #include "RNWK.h"
 #include "RPHY.h"
 
+
+typedef enum {
+  RACE_START,
+  RACE_LINE,
+  RACE_STOP
+} RACE_STATE;
+
+void SendSignal(RAPP_SIG_MSG_t);
+
 uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *data, RNWK_ShortAddrType srcAddr, bool *handled, RPHY_PacketDesc *packet);
 
 /*!
@@ -46,6 +55,8 @@ void REMOTE_Deinit(void);
 
 /*! \brief Initialization of the module */
 void REMOTE_Init(void);
+
+
 
 #endif /* PL_REMOTE */
 
