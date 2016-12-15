@@ -81,7 +81,9 @@ void APP_EventHandler(EVNT_Handle event) {
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=2
 	case EVNT_SW2_PRESSED:
+#if PL_CONFIG_HAS_LCD
 		EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
+#endif
 		SHELL_SendString("LCD Left\r\n");
 		break;
 	#endif
@@ -90,14 +92,18 @@ void APP_EventHandler(EVNT_Handle event) {
         #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_StartCalib();
         #endif
+#if PL_CONFIG_HAS_LCD
 		EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
 		SHELL_SendString("LCD Down\r\n");
+#endif
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=4
 	case EVNT_SW4_PRESSED:
+#if PL_CONFIG_HAS_LCD
 		EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
 		SHELL_SendString("LCD Center\r\n");
+#endif
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=5
@@ -105,8 +111,10 @@ void APP_EventHandler(EVNT_Handle event) {
         #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_SetOnOff(TRUE);
         #endif
+#if PL_CONFIG_HAS_LCD
 		EVNT_SetEvent(EVNT_LCD_BTN_UP);
 		SHELL_SendString("LCD Up\r\n");
+#endif
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=6
