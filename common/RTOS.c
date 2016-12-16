@@ -29,7 +29,7 @@ static void AppTask(void* param) {
 	#endif
 
     /* \todo handle your application code here */
-    FRTOS1_vTaskDelay(pdMS_TO_TICKS(100));
+    FRTOS1_vTaskDelay(pdMS_TO_TICKS(50));
   }
 }
 
