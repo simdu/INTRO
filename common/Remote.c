@@ -394,7 +394,7 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 #endif
   uint8_t val;
   int16_t x, y, z;
-  
+  static bool sigSend = FALSE;
   (void)size;
   (void)packet;
   switch(type) {
@@ -434,6 +434,11 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         y1000 = scaleJoystickTo4K(y);
         if (REMOTE_useJoystick) {
           REMOTE_HandleMotorMsg(y1000, x1000, 0); /* first param is forward/backward speed, second param is direction */
+          if(y1000 > 49 && !sigSend)
+          {
+        	  sigSend = TRUE;
+        	  SendSignal(RAPP_SIG_A);
+          }
         }
       }
       break;
@@ -456,21 +461,9 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	 REF_CalibrateStartStop();
     	 //DRV_SetMode(DRV_MODE_STOP);
       } else if (val=='A') { /* green 'A' button hooorn */
-    	  switch(state){
-			  case RACE_START:
-				  state = RACE_LINE;
-				  SendSignal(RAPP_SIG_A);
-				  break;
-			  case RACE_LINE:
-				  SendSignal(RAPP_SIG_B);
-				  LF_StartFollowing();
-				  state = RACE_STOP;
-				  break;
-			  case RACE_STOP:
-				  SendSignal(RAPP_SIG_C);
-				  state = RACE_START;
-				  break;
-    	  }
+			SendSignal(RAPP_SIG_B);
+			LF_StartFollowing();
+
       } else if (val=='B') { /* green 'A' button hooorn */
       	//BUZ_PlayTune(BUZ_TUNE_WELCOME);
       	  //send signal B

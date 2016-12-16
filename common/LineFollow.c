@@ -14,6 +14,8 @@
 #include "Shell.h"
 #include "Motor.h"
 #include "Reflectance.h"
+#include "RNet_AppConfig.h"
+#include "Remote.h"
 #if PL_CONFIG_HAS_TURN
   #include "Turn.h"
 #endif
@@ -129,6 +131,8 @@ static void StateMachine(void) {
       /*! \todo Handle maze finished */
       #endif /* PL_CONFIG_HAS_LINE_MAZE */
       DRV_SetMode(DRV_MODE_STOP);
+      SendSignal(RAPP_SIG_C);
+      LF_currState = STATE_STOP;
       break;
     case STATE_STOP:
       SHELL_SendString("Stopped!\r\n");
