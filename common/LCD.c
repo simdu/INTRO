@@ -26,6 +26,7 @@
   #include "RPHY.h"
   #include "RNet_App.h"
   #include "Radio.h"
+  #include "Remote.h"
 #endif
 
 /* status variables */
@@ -257,13 +258,13 @@ uint8_t LCD_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *dat
 #endif /* PL_CONFIG_HAS_LCD_MENU */
 
 #if PL_CONFIG_HAS_RADIO
-void SendSignal(RAPP_SIG_MSG_t symbol){
-	  uint8_t buf[2];
-	  buf[0]  =  0x01 ;
-	  buf[1]  =  symbol;
-	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
-}
-#endif
+//void SendSignal(RAPP_SIG_MSG_t symbol){
+//	  uint8_t buf[2];
+//	  buf[0]  =  0x01 ;
+//	  buf[1]  =  symbol;
+//	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+//}
+//#endif
 
 static void DrawLines(void) {
   int i;
@@ -411,3 +412,4 @@ void LCD_Init(void) {
 #endif
 }
 #endif /* PL_CONFIG_HAS_LCD */
+#endif

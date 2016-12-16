@@ -18,36 +18,36 @@
 #include "Sem.h"
 #include "Remote.h"
 #if PL_CONFIG_HAS_SHELL
-  #include "CLS1.h"
+#include "CLS1.h"
 #endif
 #if PL_CONFIG_HAS_BUZZER
-  #include "Buzzer.h"
+#include "Buzzer.h"
 #endif
 #if PL_CONFIG_HAS_RTOS
-  #include "FRTOS1.h"
-  #include "RTOS.h"
+#include "FRTOS1.h"
+#include "RTOS.h"
 #endif
 #if PL_CONFIG_HAS_SHELL
-  #include "Shell.h"
+#include "Shell.h"
 #endif
 #if PL_CONFIG_HAS_QUADRATURE
-  #include "Q4CLeft.h"
-  #include "Q4CRight.h"
+#include "Q4CLeft.h"
+#include "Q4CRight.h"
 #endif
 #if PL_CONFIG_HAS_MOTOR
-  #include "Motor.h"
+#include "Motor.h"
 #endif
 #if PL_CONFIG_BOARD_IS_ROBO_V2
-  #include "PORT_PDD.h"
+#include "PORT_PDD.h"
 #endif
 
 #if PL_CONFIG_HAS_REFLECTANCE
-  #include "LineFollow.h"
+#include "LineFollow.h"
 #endif
 
 static bool driveON = TRUE;
 
-void setInterfaceMode(bool mode){
+void setInterfaceMode(bool mode) {
 	driveON = mode;
 }
 
@@ -70,45 +70,33 @@ void APP_EventHandler(EVNT_Handle event) {
 
 #if PL_CONFIG_HAS_KEYS
 #if PL_CONFIG_NOF_KEYS>=1
-	case EVNT_SW1_PRESSED: case EVNT_SW1_LPRESSED:
+	case EVNT_SW1_PRESSED:
+	case EVNT_SW1_LPRESSED:
 #if PL_CONFIG_BOARD_IS_FRDM
 		REMOTE_Horn();
 #endif
 
 #if PL_CONFIG_HAS_LINE_FOLLOW
 		LF_StartFollowing();
-		#endif
+#endif
 
-		#if PL_CONFIG_HAS_LCD
-		if(driveON){
+#if PL_CONFIG_HAS_LCD
+		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
 			SHELL_SendString("LCD Right\r\n");
 		}
-		#endif
+#endif
 
-	break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=2
+		break;
+#endif
+#if PL_CONFIG_NOF_KEYS>=2
 	case EVNT_SW2_PRESSED:
 #if PL_CONFIG_HAS_LCD
-		if(driveON){
+		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
 			SHELL_SendString("LCD Left\r\n");
 		}
 #endif
-
-#endif
-		break;
-#endif
-#if PL_CONFIG_NOF_KEYS>=2
-	case EVNT_SW2_PRESSED: case EVNT_SW2_LPRESSED:
-#if PL_CONFIG_HAS_LCD
-		//EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
-		//REMOTE_SendXY(-50, 0);
-		//REMOTE_SendDirection(-50);
-		//SHELL_SendString("LCD Left\r\n");
-#endif
-
 		break;
 #endif
 #if PL_CONFIG_NOF_KEYS>=3
@@ -117,7 +105,7 @@ void APP_EventHandler(EVNT_Handle event) {
 		REMOTE_StartCalib();
 #endif
 #if PL_CONFIG_HAS_LCD
-		if(driveON){
+		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
 			SHELL_SendString("LCD Down\r\n");
 		}
@@ -127,7 +115,7 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_NOF_KEYS>=4
 	case EVNT_SW4_PRESSED:
 #if PL_CONFIG_HAS_LCD
-		if(driveON){
+		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
 			SHELL_SendString("LCD Center\r\n");
 		}
@@ -149,7 +137,7 @@ void APP_EventHandler(EVNT_Handle event) {
 		REMOTE_SetOnOff(TRUE);
 #endif
 #if PL_CONFIG_HAS_LCD
-		if(driveON){
+		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_UP);
 			SHELL_SendString("LCD Up\r\n");
 		}
@@ -166,7 +154,8 @@ void APP_EventHandler(EVNT_Handle event) {
 		break;
 #endif
 #if PL_CONFIG_NOF_KEYS>=7
-	case EVNT_SW7_PRESSED: case EVNT_SW7_LPRESSED:
+	case EVNT_SW7_PRESSED:
+	case EVNT_SW7_LPRESSED:
 #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_SetDriveMode();
 #endif
@@ -186,55 +175,57 @@ void APP_EventHandler(EVNT_Handle event) {
 #endif /* PL_CONFIG_HAS_EVENTS */
 
 static const KIN1_UID RoboIDs[] = {
-  /* 0: L20, V2 */ {{0x00,0x03,0x00,0x00,0x4E,0x45,0xB7,0x21,0x4E,0x45,0x32,0x15,0x30,0x02,0x00,0x13}},
-  /* 1: L21, V2 */ {{0x00,0x05,0x00,0x00,0x4E,0x45,0xB7,0x21,0x4E,0x45,0x32,0x15,0x30,0x02,0x00,0x13}},
-  /* 2: L4, V1  */ {{0x00,0x0B,0xFF,0xFF,0x4E,0x45,0xFF,0xFF,0x4E,0x45,0x27,0x99,0x10,0x02,0x00,0x24}}, /* revert right motor */
+/* 0: L20, V2 */{ { 0x00, 0x03, 0x00, 0x00, 0x4E, 0x45, 0xB7, 0x21, 0x4E, 0x45,
+		0x32, 0x15, 0x30, 0x02, 0x00, 0x13 } },
+/* 1: L21, V2 */{ { 0x00, 0x05, 0x00, 0x00, 0x4E, 0x45, 0xB7, 0x21, 0x4E, 0x45,
+		0x32, 0x15, 0x30, 0x02, 0x00, 0x13 } },
+/* 2: L4, V1  */{ { 0x00, 0x0B, 0xFF, 0xFF, 0x4E, 0x45, 0xFF, 0xFF, 0x4E, 0x45,
+		0x27, 0x99, 0x10, 0x02, 0x00, 0x24 } }, /* revert right motor */
 };
 
 static void APP_AdoptToHardware(void) {
-  KIN1_UID id;
-  uint8_t res;
+	KIN1_UID id;
+	uint8_t res;
 
-  res = KIN1_UIDGet(&id);
-  if (res!=ERR_OK) {
-    for(;;); /* error */
-  }
+	res = KIN1_UIDGet(&id);
+	if (res != ERR_OK) {
+		for (;;)
+			; /* error */
+	}
 #if PL_CONFIG_HAS_MOTOR
-  MOT_Invert(MOT_GetMotorHandle(MOT_MOTOR_LEFT), TRUE); /* revert left motor */
-  (void)Q4CLeft_SwapPins(TRUE);
-  (void)Q4CRight_SwapPins(TRUE);
+	MOT_Invert(MOT_GetMotorHandle(MOT_MOTOR_LEFT), TRUE); /* revert left motor */
+	(void)Q4CLeft_SwapPins(TRUE);
+	(void)Q4CRight_SwapPins(TRUE);
 
-
-  if (KIN1_UIDSame(&id, &RoboIDs[2])) { /* L4 */
-    MOT_Invert(MOT_GetMotorHandle(MOT_MOTOR_LEFT), TRUE); /* revert left motor */
+	if (KIN1_UIDSame(&id, &RoboIDs[2])) { /* L4 */
+		MOT_Invert(MOT_GetMotorHandle(MOT_MOTOR_LEFT), TRUE); /* revert left motor */
 #if PL_CONFIG_HAS_QUADRATURE
-    (void)Q4CLeft_SwapPins(TRUE);
-    (void)Q4CRight_SwapPins(TRUE);
+		(void)Q4CLeft_SwapPins(TRUE);
+		(void)Q4CRight_SwapPins(TRUE);
 #endif
-  }
+	}
 #endif
 #if PL_CONFIG_HAS_QUADRATURE && PL_CONFIG_BOARD_IS_ROBO_V2
-  /* pull-ups for Quadrature Encoder Pins */
-  PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 10, PORT_PDD_PULL_UP);
-  PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 10, PORT_PDD_PULL_ENABLE);
-  PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 11, PORT_PDD_PULL_UP);
-  PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 11, PORT_PDD_PULL_ENABLE);
-  PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 16, PORT_PDD_PULL_UP);
-  PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 16, PORT_PDD_PULL_ENABLE);
-  PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 17, PORT_PDD_PULL_UP);
-  PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 17, PORT_PDD_PULL_ENABLE);
+	/* pull-ups for Quadrature Encoder Pins */
+	PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 10, PORT_PDD_PULL_UP);
+	PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 10, PORT_PDD_PULL_ENABLE);
+	PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 11, PORT_PDD_PULL_UP);
+	PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 11, PORT_PDD_PULL_ENABLE);
+	PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 16, PORT_PDD_PULL_UP);
+	PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 16, PORT_PDD_PULL_ENABLE);
+	PORT_PDD_SetPinPullSelect(PORTC_BASE_PTR, 17, PORT_PDD_PULL_UP);
+	PORT_PDD_SetPinPullEnable(PORTC_BASE_PTR, 17, PORT_PDD_PULL_ENABLE);
 #endif
 }
 
 void APP_Start(void) {
 #if PL_CONFIG_HAS_RTOS
 #if configUSE_TRACE_HOOKS
-  PTRC1_uiTraceStart();
+	PTRC1_uiTraceStart();
 #endif
 #endif
-  PL_Init();
-  APP_AdoptToHardware();
-  vTaskStartScheduler();
+	PL_Init();
+	APP_AdoptToHardware();
+	vTaskStartScheduler();
 }
-
 

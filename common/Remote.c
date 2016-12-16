@@ -13,6 +13,7 @@
 #include "CLS1.h"
 #include "UTIL1.h"
 #include "Shell.h"
+#endif
 #if PL_CONFIG_HAS_PID
   #include "PID.h"
 #endif
