@@ -369,11 +369,9 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 
 void SendSignal(RAPP_SIG_MSG_t symbol){
 	  uint8_t buf[2];
-	  //RADIO_SetChannel(0);
 	  buf[0]  =  0x01 ;
 	  buf[1]  =  symbol;
-	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
-	  //RADIO_SetChannel(95);
+	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
 }
 
 #if PL_CONFIG_HAS_JOYSTICK
