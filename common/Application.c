@@ -74,16 +74,8 @@ void APP_EventHandler(EVNT_Handle event) {
 #endif
 
 #if PL_CONFIG_HAS_LCD
-		//EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+		EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
 		//REMOTE_SendXY(50, 0);
-		REMOTE_SendDirection(50);
-#endif
-		break;
-	case EVNT_SW1_RELEASED:
-#if PL_CONFIG_HAS_LCD
-		//EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
-		//REMOTE_SendXY(50, 0);
-		REMOTE_SendDirection(0);
 #endif
 		break;
 #endif
@@ -92,14 +84,8 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_HAS_LCD
 		//EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
 		//REMOTE_SendXY(-50, 0);
-		REMOTE_SendDirection(-50);
+		//REMOTE_SendDirection(-50);
 		//SHELL_SendString("LCD Left\r\n");
-#endif
-
-		break;
-	case EVNT_SW2_RELEASED:
-#if PL_CONFIG_HAS_LCD
-		REMOTE_SendDirection(0);
 #endif
 
 		break;
@@ -153,15 +139,7 @@ void APP_EventHandler(EVNT_Handle event) {
 		REMOTE_SetDriveMode();
 #endif
 		//REMOTE_StartLineFollowing();
-		REMOTE_SendSpeed(30);
-		SHELL_SendString("Start Line Following\r\n");
-		break;
-	case EVNT_SW7_RELEASED:
-#if PL_CONFIG_HAS_JOYSTICK
-		REMOTE_SetDriveMode();
-#endif
-		//REMOTE_StartLineFollowing();
-		REMOTE_SendSpeed(0);
+//		REMOTE_SendSpeed(30);
 		SHELL_SendString("Start Line Following\r\n");
 		break;
 #endif

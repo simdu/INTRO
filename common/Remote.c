@@ -41,14 +41,24 @@
 #if PL_CONFIG_HAS_BUZZER
 	#include "Buzzer.h"
 #endif
+#if PL_CONFIG_HAS_DIGITALJOYSTICK
+	#include "SW1.h"
+    #include "SW2.h"
+    #include "SW3.h"
+    #include "SW4.h"
+    #include "SW5.h"
+    #include "SW6.h"
+    #include "SW7.h"
+#endif
 
 static bool REMOTE_isOn = FALSE;
 static bool REMOTE_isVerbose = FALSE;
 static bool REMOTE_useJoystick = TRUE;
 
-int8_t actualdirection;
-int8_t actualspeed;
-
+int8_t setdirection = 50;
+int8_t setspeed = 50;
+int8_t actualdirection = 0;
+int8_t actualspeed = 0;
 #if PL_CONFIG_HAS_JOYSTICK
 static uint16_t midPointX, midPointY;
 #endif
@@ -74,8 +84,8 @@ void REMOTE_Stop(void)
 	actualdirection = 0;
 	actualspeed = 0;
 	uint8_t buf[2];
-	    buf[0] = actualdirection;
-	    buf[1] = actualspeed;
+	    buf[0] =  0;
+	    buf[1] =  0;
 	    //SHELL_SendString("LCD Up\r\n");
 	   (void)RAPP_SendPayloadDataBlock(buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_XY, RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
 	//uint8_t buf = RAPP_BTN_MSG_STOP;
@@ -120,23 +130,32 @@ void REMOTE_SendSpeed(int8_t speed){
 	SHELL_SendString(txtBuf);
 }
 void REMOTE_SendXY(int8_t direction, int8_t speed){
-	actualdirection += direction;
-	actualspeed += speed;
+	//actualdirection = direction;
+	//actualspeed = speed;
 
 	uint8_t buf[2];
-    buf[0] = actualdirection;
-    buf[1] = actualspeed;
+    buf[0] = direction;
+    buf[1] = speed;
     //SHELL_SendString("LCD Up\r\n");
     (void)RAPP_SendPayloadDataBlock(buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_XY, RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
     uint8_t txtBuf[48];
 	UTIL1_strcpy(txtBuf, sizeof(txtBuf), (unsigned char*) "SendXY: x: ");
-	UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), actualdirection);
+	UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), direction);
 	UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*) " y: ");
-	UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), actualspeed);
+	UTIL1_strcatNum8s(txtBuf, sizeof(txtBuf), speed);
 	UTIL1_strcat(txtBuf, sizeof(txtBuf), (unsigned char*) "\r\n");
 	SHELL_SendString(txtBuf);
 }
-#if PL_CONFIG_CONTROL_SENDER
+
+void REMOTE_SetSpeed(int8_t speed){
+	setspeed = speed;
+}
+void REMOTE_SetDirection(int8_t direction){
+	setdirection = direction;
+}
+
+#if PL_CONFIG_CONTROL_SENDER | PL_CONFIG_HAS_DIGITALJOYSTICK
+#if PL_CONFIG_HAS_JOYSTICK
 static int8_t ToSigned8Bit(uint16_t val, bool isX) {
   int32_t tmp;
 
@@ -186,7 +205,7 @@ static uint8_t REMOTE_GetXY(uint16_t *x, uint16_t *y, int8_t *x8, int8_t *y8) {
   }
   return ERR_OK;
 }
-
+#endif
 
 static void RemoteTask (void *pvParameters) {
   (void)pvParameters;
@@ -195,7 +214,7 @@ static void RemoteTask (void *pvParameters) {
 #endif
   FRTOS1_vTaskDelay(1000/portTICK_PERIOD_MS);
   for(;;) {
-    if (REMOTE_isOn) {
+    if (1){//(REMOTE_isOn) {
 #if PL_CONFIG_HAS_JOYSTICK
       if (REMOTE_useJoystick) {
     	static int8_t oldx8[2];
@@ -233,6 +252,38 @@ static void RemoteTask (void *pvParameters) {
         oldx8[0] = x8;
         oldy8[0] = y8;
      }
+#endif
+#if PL_CONFIG_HAS_DIGITALJOYSTICK
+
+  	static int8_t olddirection[2];
+  	static int8_t oldspeed[2];
+     int8_t direction = 0;
+	 int8_t speed = 0;
+      if(!SW1_GetVal()) //right
+      {
+    	  direction = setdirection;
+      }
+      if(!SW2_GetVal()) //left
+      {
+    	  direction = -setdirection;
+      }
+
+      if(!SW7_GetVal()) //forwards
+      {
+    	  speed = setspeed;
+      }
+
+      if(!SW6_GetVal()) //backwards
+      {
+    	  speed = -setspeed;
+      }
+      if(direction != olddirection[1] || speed != oldspeed[1]){
+      REMOTE_SendXY(direction, speed);
+      }
+      olddirection[1] = olddirection[0];
+      oldspeed[1] = oldspeed[0];
+      olddirection[0] = direction;
+      oldspeed[0] = speed;
 #endif
       FRTOS1_vTaskDelay(200/portTICK_PERIOD_MS);
     } else {
@@ -502,7 +553,7 @@ void REMOTE_Init(void) {
   //REMOTE_isOn = TRUE;
   REMOTE_isVerbose = FALSE;
   REMOTE_useJoystick = TRUE;
-#if PL_CONFIG_CONTROL_SENDER
+#if PL_CONFIG_CONTROL_SENDER | PL_CONFIG_HAS_DIGITALJOYSTICK
   if (FRTOS1_xTaskCreate(RemoteTask, "Remote", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
     for(;;){} /* error */
   }

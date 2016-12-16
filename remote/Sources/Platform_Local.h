@@ -52,6 +52,7 @@
 #define PL_LOCAL_CONFIG_HAS_JOYSTICK_DISABLED             /* disable joystick */
 //#define PL_LOCAL_CONFIG_HAS_LCD_DISABLED                  /* disable LCD */
 //#define PL_LOCAL_CONFIG_HAS_LCD_MENU_DISABLED             /* disable LCD menu */
+#define PL_CONFIG_HAS_DIGITALJOYSTICK 1
 
 /* robot hardware functionality */
 #define PL_LOCAL_CONFIG_HAS_MOTOR_DISABLED                /* disable motor */
