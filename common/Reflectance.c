@@ -279,7 +279,8 @@ static REF_LineKind ReadLineKind(SensorTimeType val[REF_NOF_SENSORS]) {
     }
   }
   if (i==REF_NOF_SENSORS) { /* all sensors see 'black' */
-    return REF_LINE_FULL;
+	  SendSignal(RAPP_SIG_C);
+	  return REF_LINE_FULL;
   }
   /* check the line type */
   sum = 0; sumLeft = 0; sumRight = 0;

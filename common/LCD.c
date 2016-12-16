@@ -26,6 +26,7 @@
   #include "RPHY.h"
   #include "RNet_App.h"
   #include "Radio.h"
+  #include "RStdIO.h"
   #include "Remote.h"
 #endif
 
@@ -49,6 +50,9 @@ typedef enum {
   LCD_MENU_ID_STICK,
   LCD_MENU_ID_SPEED,
   LCD_MENU_ID_CURVE,
+  LCD_MENU_ID_LINE,
+  LCD_MENU_ID_CALIB,
+
 } LCD_MenuIDs;
 
 static LCDMenu_StatusFlags ValueChangeHandler(const struct LCDMenu_MenuItem_ *item, LCDMenu_EventType event, void **dataP) {
@@ -163,8 +167,11 @@ static LCDMenu_StatusFlags StickMenuHandler(const struct LCDMenu_MenuItem_ *item
   if (event==LCDMENU_EVENT_GET_TEXT && dataP!=NULL) {
 	  if(DriveModeOn){
 		  *dataP = "Drive Mode OFF";
+		  REMOTE_SetOnOff(FALSE);
 	  } else {
 		  *dataP = "Drive Mode ON";
+		  REMOTE_SetDriveMode();
+		  REMOTE_SetOnOff(TRUE);
 	  }
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_ENTER) { /* toggle setting */
@@ -194,9 +201,11 @@ static LCDMenu_StatusFlags SpeedMenuHandler(const struct LCDMenu_MenuItem_ *item
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_DECREMENT) {
 	  speed-=10;
+	  REMOTE_SetSpeed(speed);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_INCREMENT) {
 	  speed+=10;
+	  REMOTE_SetSpeed(speed);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   }
   return flags;
@@ -221,10 +230,27 @@ static LCDMenu_StatusFlags CurveMenuHandler(const struct LCDMenu_MenuItem_ *item
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_DECREMENT) {
 	  curve-=10;
+	  REMOTE_SetDirection(curve);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_INCREMENT) {
 	  curve+=10;
+	  REMOTE_SetDirection(curve);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+  }
+  return flags;
+}
+
+static LCDMenu_StatusFlags CalibMenuHandler(const struct LCDMenu_MenuItem_ *item, LCDMenu_EventType event, void **dataP) {
+  LCDMenu_StatusFlags flags = LCDMENU_STATUS_FLAGS_NONE;
+
+  (void)item;
+  if (event==LCDMENU_EVENT_GET_TEXT && dataP!=NULL) {
+	*dataP = "Start/Stop calib";
+    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+  } else if (event==LCDMENU_EVENT_ENTER) { /* toggle setting */
+	//REF_CalibrateStartStop();
+	REMOTE_StartCalib();
+	flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   }
   return flags;
 }
@@ -243,6 +269,8 @@ static const LCDMenu_MenuItem menus[] =
 	  {LCD_MENU_ID_STICK,                 	  3,   0,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           StickMenuHandler,             LCDMENU_MENU_FLAGS_NONE},
 	  {LCD_MENU_ID_SPEED,                 	  3,   1,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           SpeedMenuHandler,             LCDMENU_MENU_FLAGS_EDITABLE},
 	  {LCD_MENU_ID_CURVE,                 	  3,   2,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           CurveMenuHandler,             LCDMENU_MENU_FLAGS_EDITABLE},
+	{LCD_MENU_ID_LINE,                        0,   3,   LCD_MENU_ID_NONE,         LCD_MENU_ID_CALIB,            	"Line",			NULL,                         LCDMENU_MENU_FLAGS_NONE},
+	  {LCD_MENU_ID_CALIB,                 	  4,   0,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           CalibMenuHandler,             LCDMENU_MENU_FLAGS_NONE},
 
 };
 
