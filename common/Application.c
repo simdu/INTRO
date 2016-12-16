@@ -45,6 +45,12 @@
   #include "LineFollow.h"
 #endif
 
+static bool driveON = TRUE;
+
+void setInterfaceMode(bool mode){
+	driveON = mode;
+}
+
 #if PL_CONFIG_HAS_EVENTS
 void APP_EventHandler(EVNT_Handle event) {
   switch(event) {
@@ -74,17 +80,22 @@ void APP_EventHandler(EVNT_Handle event) {
 		#endif
 
 		#if PL_CONFIG_HAS_LCD
-				EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+		if(driveON){
+			EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+			SHELL_SendString("LCD Right\r\n");
+		}
 		#endif
-		SHELL_SendString("LCD Right\r\n");
+
 	break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=2
 	case EVNT_SW2_PRESSED:
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
+		if(driveON){
+			EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
+			SHELL_SendString("LCD Left\r\n");
+		}
 #endif
-		SHELL_SendString("LCD Left\r\n");
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=3
@@ -93,16 +104,26 @@ void APP_EventHandler(EVNT_Handle event) {
 		REMOTE_StartCalib();
         #endif
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
-		SHELL_SendString("LCD Down\r\n");
+		if(driveON){
+			EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
+			SHELL_SendString("LCD Down\r\n");
+		}
 #endif
 		break;
 	#endif
 	#if PL_CONFIG_NOF_KEYS>=4
 	case EVNT_SW4_PRESSED:
 #if PL_CONFIG_HAS_LCD
+		if(driveON){
+			EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
+			SHELL_SendString("LCD Center\r\n");
+		}
+#endif
+		break;
+	case EVNT_SW4_LPRESSED:
+#if PL_CONFIG_HAS_LCD
 		EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
-		SHELL_SendString("LCD Center\r\n");
+		driveON = TRUE;
 #endif
 		break;
 	#endif
@@ -112,8 +133,10 @@ void APP_EventHandler(EVNT_Handle event) {
 		REMOTE_SetOnOff(TRUE);
         #endif
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_UP);
-		SHELL_SendString("LCD Up\r\n");
+		if(driveON){
+			EVNT_SetEvent(EVNT_LCD_BTN_UP);
+			SHELL_SendString("LCD Up\r\n");
+		}
 #endif
 		break;
 	#endif

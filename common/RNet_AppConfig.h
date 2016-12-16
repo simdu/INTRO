@@ -34,7 +34,8 @@ typedef enum {
 typedef enum {
   RAPP_SIG_A = 'A',
   RAPP_SIG_B= 'B',
-  RAPP_SIG_C = 'C'
+  RAPP_SIG_C = 'C',
+  RAPP_SIG_T = 'T',
 } RAPP_SIG_MSG_t;
 
 #endif /* PL_CONFIG_HAS_RADIO */

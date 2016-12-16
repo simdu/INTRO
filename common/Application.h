@@ -19,4 +19,6 @@ void APP_EventHandler(EVNT_Handle event);
 
 void APP_Start(void);
 
+void setInterfaceMode(bool);
+
 #endif /* SOURCES_FS2016_COMMON_APPLICATION_H_ */
