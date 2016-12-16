@@ -167,8 +167,11 @@ static LCDMenu_StatusFlags StickMenuHandler(const struct LCDMenu_MenuItem_ *item
   if (event==LCDMENU_EVENT_GET_TEXT && dataP!=NULL) {
 	  if(DriveModeOn){
 		  *dataP = "Drive Mode OFF";
+		  REMOTE_SetOnOff(FALSE);
 	  } else {
 		  *dataP = "Drive Mode ON";
+		  REMOTE_SetDriveMode();
+		  REMOTE_SetOnOff(TRUE);
 	  }
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_ENTER) { /* toggle setting */
@@ -198,9 +201,11 @@ static LCDMenu_StatusFlags SpeedMenuHandler(const struct LCDMenu_MenuItem_ *item
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_DECREMENT) {
 	  speed-=10;
+	  REMOTE_SetSpeed(speed);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_INCREMENT) {
 	  speed+=10;
+	  REMOTE_SetSpeed(speed);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   }
   return flags;
@@ -225,9 +230,11 @@ static LCDMenu_StatusFlags CurveMenuHandler(const struct LCDMenu_MenuItem_ *item
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_DECREMENT) {
 	  curve-=10;
+	  REMOTE_SetDirection(curve);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_INCREMENT) {
 	  curve+=10;
+	  REMOTE_SetDirection(curve);
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   }
   return flags;
@@ -242,7 +249,7 @@ static LCDMenu_StatusFlags CalibMenuHandler(const struct LCDMenu_MenuItem_ *item
     flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   } else if (event==LCDMENU_EVENT_ENTER) { /* toggle setting */
 	//REF_CalibrateStartStop();
-	RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN, "app send in ref calib", UTIL1_strlen((char*)"app send in ref calib"));
+	REMOTE_StartCalib();
 	flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
   }
   return flags;

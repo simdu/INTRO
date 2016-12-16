@@ -224,7 +224,7 @@ static void RemoteTask (void *pvParameters) {
 #endif
   FRTOS1_vTaskDelay(1000/portTICK_PERIOD_MS);
   for(;;) {
-    if (1){//(REMOTE_isOn) {
+    if (REMOTE_isOn) {
 #if PL_CONFIG_HAS_JOYSTICK
       if (REMOTE_useJoystick) {
     	static int8_t oldx8[2];

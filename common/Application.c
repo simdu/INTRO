@@ -140,6 +140,9 @@ void APP_EventHandler(EVNT_Handle event) {
 		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_UP);
 			SHELL_SendString("LCD Up\r\n");
+		} else{
+			REMOTE_StartLineFollowing();
+			SHELL_SendString("State Maschine next state\r\n");
 		}
 #endif
 		break;
