@@ -26,6 +26,7 @@
   #include "RPHY.h"
   #include "RNet_App.h"
   #include "Radio.h"
+  #include "RStdIO.h"
 #endif
 
 /* status variables */
@@ -48,6 +49,9 @@ typedef enum {
   LCD_MENU_ID_STICK,
   LCD_MENU_ID_SPEED,
   LCD_MENU_ID_CURVE,
+  LCD_MENU_ID_LINE,
+  LCD_MENU_ID_CALIB,
+
 } LCD_MenuIDs;
 
 static LCDMenu_StatusFlags ValueChangeHandler(const struct LCDMenu_MenuItem_ *item, LCDMenu_EventType event, void **dataP) {
@@ -228,6 +232,21 @@ static LCDMenu_StatusFlags CurveMenuHandler(const struct LCDMenu_MenuItem_ *item
   return flags;
 }
 
+static LCDMenu_StatusFlags CalibMenuHandler(const struct LCDMenu_MenuItem_ *item, LCDMenu_EventType event, void **dataP) {
+  LCDMenu_StatusFlags flags = LCDMENU_STATUS_FLAGS_NONE;
+
+  (void)item;
+  if (event==LCDMENU_EVENT_GET_TEXT && dataP!=NULL) {
+	*dataP = "Start/Stop calib";
+    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+  } else if (event==LCDMENU_EVENT_ENTER) { /* toggle setting */
+	//REF_CalibrateStartStop();
+	RSTDIO_SendToTxStdio(RSTDIO_QUEUE_TX_IN, "app send in ref calib", UTIL1_strlen((char*)"app send in ref calib"));
+	flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+  }
+  return flags;
+}
+
 static const LCDMenu_MenuItem menus[] =
 {/* id,                                     grp, pos,   up,                       down,                             text,           callback                      flags                  */
     {LCD_MENU_ID_MAIN,                        0,   0,   LCD_MENU_ID_NONE,         LCD_MENU_ID_BACKLIGHT,            "General",      NULL,                         LCDMENU_MENU_FLAGS_NONE},
@@ -242,6 +261,8 @@ static const LCDMenu_MenuItem menus[] =
 	  {LCD_MENU_ID_STICK,                 	  3,   0,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           StickMenuHandler,             LCDMENU_MENU_FLAGS_NONE},
 	  {LCD_MENU_ID_SPEED,                 	  3,   1,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           SpeedMenuHandler,             LCDMENU_MENU_FLAGS_EDITABLE},
 	  {LCD_MENU_ID_CURVE,                 	  3,   2,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           CurveMenuHandler,             LCDMENU_MENU_FLAGS_EDITABLE},
+	{LCD_MENU_ID_LINE,                        0,   3,   LCD_MENU_ID_NONE,         LCD_MENU_ID_CALIB,            	"Line",			NULL,                         LCDMENU_MENU_FLAGS_NONE},
+	  {LCD_MENU_ID_CALIB,                 	  4,   0,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           CalibMenuHandler,             LCDMENU_MENU_FLAGS_NONE},
 
 };
 
