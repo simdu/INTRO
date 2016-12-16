@@ -64,7 +64,7 @@ void APP_EventHandler(EVNT_Handle event) {
 
 #if PL_CONFIG_HAS_KEYS
 #if PL_CONFIG_NOF_KEYS>=1
-	case EVNT_SW1_PRESSED:
+	case EVNT_SW1_PRESSED: case EVNT_SW1_LPRESSED:
 #if PL_CONFIG_BOARD_IS_FRDM
 		REMOTE_Horn();
 #endif
@@ -78,16 +78,28 @@ void APP_EventHandler(EVNT_Handle event) {
 		//REMOTE_SendXY(50, 0);
 		REMOTE_SendDirection(50);
 #endif
-
+		break;
+	case EVNT_SW1_RELEASED:
+#if PL_CONFIG_HAS_LCD
+		//EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+		//REMOTE_SendXY(50, 0);
+		REMOTE_SendDirection(0);
+#endif
 		break;
 #endif
 #if PL_CONFIG_NOF_KEYS>=2
-	case EVNT_SW2_PRESSED:
+	case EVNT_SW2_PRESSED: case EVNT_SW2_LPRESSED:
 #if PL_CONFIG_HAS_LCD
 		//EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
 		//REMOTE_SendXY(-50, 0);
 		REMOTE_SendDirection(-50);
 		//SHELL_SendString("LCD Left\r\n");
+#endif
+
+		break;
+	case EVNT_SW2_RELEASED:
+#if PL_CONFIG_HAS_LCD
+		REMOTE_SendDirection(0);
 #endif
 
 		break;
@@ -136,7 +148,7 @@ void APP_EventHandler(EVNT_Handle event) {
 		break;
 #endif
 #if PL_CONFIG_NOF_KEYS>=7
-	case EVNT_SW7_PRESSED:
+	case EVNT_SW7_PRESSED: case EVNT_SW7_LPRESSED:
 #if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_SetDriveMode();
 #endif
