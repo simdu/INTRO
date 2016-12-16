@@ -453,7 +453,7 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         DRV_SetMode(DRV_MODE_SPEED);
         SHELL_SendString("Remote ON\r\n");
       } else if (val=='C') { /* red 'C' button calibrate reflectance sensors*/
-    	 //REF_CalibrateStartStop();
+    	 REF_CalibrateStartStop();
     	 //DRV_SetMode(DRV_MODE_STOP);
       } else if (val=='A') { /* green 'A' button hooorn */
     	  switch(state){
