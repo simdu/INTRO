@@ -28,7 +28,7 @@ typedef enum {
   RAPP_BTN_MSG_DRIVE = 0x47,
   RAPP_BTN_MSG_CALIB= 0x43,
   RAPP_BTN_MSG_STOP = 0x47,
-  RAPP_BTN_MSG_HORN = 'A'
+  RAPP_BTN_MSG_A = 'A'
 } RAPP_BTN_MSG_t;
 #endif /* PL_CONFIG_HAS_RADIO */
 

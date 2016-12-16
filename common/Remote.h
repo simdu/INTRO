@@ -26,6 +26,10 @@ void REMOTE_SetDriveMode(void);
 void REMOTE_StartCalib(void);
 void REMOTE_Stop(void);
 void REMOTE_Horn(void);
+void REMOTE_SendXY(int8_t x8, int8_t y8);
+void REMOTE_StartLineFollowing(void);
+void REMOTE_SendSpeed(int8_t speed);
+void REMOTE_SendDirection(int8_t direction);
 /*!
  * \brief Function to turn on or off the remote controller.
  * \param[in] on TRUE for turning it on, FALSE otherwise.

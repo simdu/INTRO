@@ -47,99 +47,119 @@
 
 #if PL_CONFIG_HAS_EVENTS
 void APP_EventHandler(EVNT_Handle event) {
-  switch(event) {
-  case EVNT_STARTUP:
+	switch (event) {
+	case EVNT_STARTUP:
 #if PL_CONFIG_HAS_LEDS
-    LED1_On(); /* just do something */
+		LED1_On(); /* just do something */
 #endif
 #if PL_CONFIG_HAS_BUZZER
-    BUZ_PlayTune(BUZ_TUNE_WELCOME);
+		BUZ_PlayTune(BUZ_TUNE_WELCOME);
 #endif
-    break;
-  case EVNT_LED_HEARTBEAT:
+		break;
+	case EVNT_LED_HEARTBEAT:
 #if PL_CONFIG_HAS_LEDS
-    LED1_Neg();
+		LED1_Neg();
 #endif
-    break;
+		break;
 
 #if PL_CONFIG_HAS_KEYS
-	#if PL_CONFIG_NOF_KEYS>=1
+#if PL_CONFIG_NOF_KEYS>=1
 	case EVNT_SW1_PRESSED:
-		#if PL_CONFIG_BOARD_IS_FRDM
+#if PL_CONFIG_BOARD_IS_FRDM
 		REMOTE_Horn();
-		#endif
+#endif
 
-		#if PL_CONFIG_HAS_LINE_FOLLOW
+#if PL_CONFIG_HAS_LINE_FOLLOW
 		LF_StartFollowing();
-		#endif
+#endif
 
-		#if PL_CONFIG_HAS_LCD
-				EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
-		#endif
-		SHELL_SendString("LCD Right\r\n");
-	break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=2
+#if PL_CONFIG_HAS_LCD
+		//EVNT_SetEvent(EVNT_LCD_BTN_RIGHT);
+		//REMOTE_SendXY(50, 0);
+		REMOTE_SendDirection(50);
+#endif
+
+		break;
+#endif
+#if PL_CONFIG_NOF_KEYS>=2
 	case EVNT_SW2_PRESSED:
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
+		//EVNT_SetEvent(EVNT_LCD_BTN_LEFT);
+		//REMOTE_SendXY(-50, 0);
+		REMOTE_SendDirection(-50);
+		//SHELL_SendString("LCD Left\r\n");
 #endif
-		SHELL_SendString("LCD Left\r\n");
+
 		break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=3
+#endif
+#if PL_CONFIG_NOF_KEYS>=3
 	case EVNT_SW3_PRESSED:
-        #if PL_CONFIG_HAS_JOYSTICK
+#if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_StartCalib();
-        #endif
+#endif
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
-		SHELL_SendString("LCD Down\r\n");
+		//EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
+		REMOTE_SendXY(0, -20);
+		//SHELL_SendString("LCD Down\r\n");
 #endif
 		break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=4
+#endif
+#if PL_CONFIG_NOF_KEYS>=4
 	case EVNT_SW4_PRESSED:
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
-		SHELL_SendString("LCD Center\r\n");
+		//EVNT_SetEvent(EVNT_LCD_BTN_CENTER);
+		REMOTE_Stop();
+		REMOTE_SetDriveMode();
+		SHELL_SendString("Stop/DriveMode\r\n");
 #endif
 		break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=5
+#endif
+#if PL_CONFIG_NOF_KEYS>=5
 	case EVNT_SW5_PRESSED:
-        #if PL_CONFIG_HAS_JOYSTICK
+#if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_SetOnOff(TRUE);
-        #endif
+#endif
 #if PL_CONFIG_HAS_LCD
-		EVNT_SetEvent(EVNT_LCD_BTN_UP);
+		//EVNT_SetEvent(EVNT_LCD_BTN_UP);
+		REMOTE_SendXY(0, 20);
 		SHELL_SendString("LCD Up\r\n");
 #endif
 		break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=6
+#endif
+#if PL_CONFIG_NOF_KEYS>=6
 	case EVNT_SW6_PRESSED:
-        #if PL_CONFIG_HAS_JOYSTICK
+#if PL_CONFIG_HAS_JOYSTICK
 		REMOTE_Stop();
-        REMOTE_SetOnOff(FALSE);
-        #endif
+		REMOTE_SetOnOff(FALSE);
+#endif
 		SHELL_SendString("Remote OFF\r\n");
 		break;
-	#endif
-	#if PL_CONFIG_NOF_KEYS>=7
+#endif
+#if PL_CONFIG_NOF_KEYS>=7
 	case EVNT_SW7_PRESSED:
-        #if PL_CONFIG_HAS_JOYSTICK
-        REMOTE_SetDriveMode();
-        #endif
-    	SHELL_SendString("Remote Drive\r\n");
+#if PL_CONFIG_HAS_JOYSTICK
+		REMOTE_SetDriveMode();
+#endif
+		//REMOTE_StartLineFollowing();
+		REMOTE_SendSpeed(30);
+		SHELL_SendString("Start Line Following\r\n");
 		break;
-	#endif
+	case EVNT_SW7_RELEASED:
+#if PL_CONFIG_HAS_JOYSTICK
+		REMOTE_SetDriveMode();
+#endif
+		//REMOTE_StartLineFollowing();
+		REMOTE_SendSpeed(0);
+		SHELL_SendString("Start Line Following\r\n");
+		break;
+#endif
 #endif /* PL_CONFIG_HAS_KEYS */
 
-  default:
-	  break;
-    /* \todo extend handler as needed */
-   } /* switch */
+	default:
+		break;
+		/* \todo extend handler as needed */
+	} /* switch */
+	//REMOTE_EventHandler(EVNT_Handle event)
 }
 #endif /* PL_CONFIG_HAS_EVENTS */
 
