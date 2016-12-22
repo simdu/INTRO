@@ -17,6 +17,10 @@
   uint8_t RNETA_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_StdIOType *io);
 #endif
 
+#define DST_ROBO  			0x20
+#define DST_REMOTE 			0x21
+#define DST_TIMEMEASURE 	0x12
+
 /*!
  * \brief Return the current remote node address.
  * \return Remote node address

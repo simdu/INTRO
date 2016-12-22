@@ -483,7 +483,7 @@ void SendSignal(RAPP_SIG_MSG_t symbol){
 	  uint8_t buf[2];
 	  buf[0]  =  0x01 ;
 	  buf[1]  =  symbol;
-	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+	  RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_SIGNALS, DST_TIMEMEASURE, RPHY_PACKET_FLAGS_REQ_ACK);
 }
 
 #if PL_CONFIG_HAS_JOYSTICK
