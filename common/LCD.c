@@ -52,6 +52,7 @@ typedef enum {
   LCD_MENU_ID_CURVE,
   LCD_MENU_ID_LINE,
   LCD_MENU_ID_CALIB,
+  LCD_MENU_ID_LINE_SPEED,
 
 } LCD_MenuIDs;
 
@@ -255,6 +256,41 @@ static LCDMenu_StatusFlags CalibMenuHandler(const struct LCDMenu_MenuItem_ *item
   return flags;
 }
 
+static LCDMenu_StatusFlags LineSpeedMenuHandler(const struct LCDMenu_MenuItem_ *item, LCDMenu_EventType event, void **dataP) {
+	  LCDMenu_StatusFlags flags = LCDMENU_STATUS_FLAGS_NONE;
+	  static int speed = 50;
+	  static uint8_t valueBuf[16];
+	  RSTDIO_QueueType queue = RSTDIO_QUEUE_TX_IN;
+	  static uint8_t buf[32];
+
+	  (void)item;
+	  if (event==LCDMENU_EVENT_GET_TEXT) {
+	    UTIL1_strcpy(valueBuf, sizeof(valueBuf), (uint8_t*)"Line Speed: ");
+	    UTIL1_strcatNum32s(valueBuf, sizeof(valueBuf), speed);
+	    *dataP = valueBuf;
+	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+	  } else if (event==LCDMENU_EVENT_GET_EDIT_TEXT) {
+	    UTIL1_strcpy(valueBuf, sizeof(valueBuf), (uint8_t*)"[-] ");
+	    UTIL1_strcatNum32s(valueBuf, sizeof(valueBuf), speed);
+	    UTIL1_strcat(valueBuf, sizeof(valueBuf), (uint8_t*)" [+]");
+	    *dataP = valueBuf;
+	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+	  } else if (event==LCDMENU_EVENT_DECREMENT) {
+		  speed-=10;
+		  UTIL1_strcpy(buf, sizeof(buf), (unsigned char*) "app send in ");
+		  UTIL1_strcatNum8s(buf, sizeof(buf), speed);
+	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+	  } else if (event==LCDMENU_EVENT_INCREMENT) {
+		  speed+=10;
+		  UTIL1_strcpy(buf, sizeof(buf), (unsigned char*) "app send in ");
+		  UTIL1_strcatNum8s(buf, sizeof(buf), speed);
+	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
+	  } else if (event==LCDMENU_EVENT_ENTER){
+		  RSTDIO_SendToTxStdio(queue, buf, UTIL1_strlen((char*)buf));
+	  }
+	  return flags;
+	}
+
 static const LCDMenu_MenuItem menus[] =
 {/* id,                                     grp, pos,   up,                       down,                             text,           callback                      flags                  */
     {LCD_MENU_ID_MAIN,                        0,   0,   LCD_MENU_ID_NONE,         LCD_MENU_ID_BACKLIGHT,            "General",      NULL,                         LCDMENU_MENU_FLAGS_NONE},
@@ -271,6 +307,7 @@ static const LCDMenu_MenuItem menus[] =
 	  {LCD_MENU_ID_CURVE,                 	  3,   2,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           CurveMenuHandler,             LCDMENU_MENU_FLAGS_EDITABLE},
 	{LCD_MENU_ID_LINE,                        0,   3,   LCD_MENU_ID_NONE,         LCD_MENU_ID_CALIB,            	"Line",			NULL,                         LCDMENU_MENU_FLAGS_NONE},
 	  {LCD_MENU_ID_CALIB,                 	  4,   0,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           CalibMenuHandler,             LCDMENU_MENU_FLAGS_NONE},
+	  {LCD_MENU_ID_LINE_SPEED,                4,   1,   LCD_MENU_ID_MAIN,         LCD_MENU_ID_NONE,                 NULL,           LineSpeedMenuHandler,         LCDMENU_MENU_FLAGS_EDITABLE},
 
 };
 
