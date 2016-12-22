@@ -41,6 +41,7 @@ void REMOTE_SendSpeed(int8_t speed);
 void REMOTE_SendDirection(int8_t direction);
 void REMOTE_SetSpeed(int8_t speed);
 void REMOTE_SetDirection(int8_t direction);
+void REMOTE_Turn(void);
 
 /*!
  * \brief Function to turn on or off the remote controller.

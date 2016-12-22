@@ -89,6 +89,12 @@ void REMOTE_StartCalib(void)
 	uint8_t buf = RAPP_BTN_MSG_CALIB;
 	 RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_BTN,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
  }
+
+void REMOTE_Turn(void)
+ {
+	uint8_t buf = RAPP_BTN_MSG_B;
+	 RAPP_SendPayloadDataBlock(&buf, sizeof(buf), RAPP_MSG_TYPE_JOYSTICK_BTN,RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+ }
 void REMOTE_Stop(void)
  {
 	actualdirection = 0;
@@ -463,10 +469,9 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
       } else if (val=='A') { /* green 'A' button hooorn */
 			SendSignal(RAPP_SIG_B);
 			LF_StartFollowing();
-
-      } else if (val=='B') { /* green 'A' button hooorn */
-      	//BUZ_PlayTune(BUZ_TUNE_WELCOME);
-      	  //send signal B
+      } else if (val=='B') {
+    	  DRV_SetMode(DRV_MODE_POS);
+    	  TURN_Turn(TURN_RIGHT180, NULL);
       }
 #else
       *handled = FALSE; /* no shell and no buzzer? */
