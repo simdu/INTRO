@@ -125,12 +125,14 @@ static void Process(void) {
 
 static void Init(void) {
 #if PL_CONFIG_BOARD_IS_ROBO
-  if (RAPP_SetThisNodeAddr(DST_REMOTE)!=ERR_OK) { /* set a default address */
+	APP_dstAddr = DST_REMOTE;
+  if (RAPP_SetThisNodeAddr(DST_ROBO)!=ERR_OK) { /* set a default address */
     //APP_DebugPrint((unsigned char*)"ERR: Failed setting node address\r\n");
   }
 #endif
 #if PL_CONFIG_BOARD_IS_REMOTE
-  if (RAPP_SetThisNodeAddr(DST_ROBO)!=ERR_OK) { /* set a default address */
+  APP_dstAddr = DST_ROBO;
+  if (RAPP_SetThisNodeAddr(DST_REMOTE)!=ERR_OK) { /* set a default address */
     //APP_DebugPrint((unsigned char*)"ERR: Failed setting node address\r\n");
   }
 #endif
