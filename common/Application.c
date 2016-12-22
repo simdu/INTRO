@@ -108,6 +108,8 @@ void APP_EventHandler(EVNT_Handle event) {
 		if (driveON) {
 			EVNT_SetEvent(EVNT_LCD_BTN_DOWN);
 			SHELL_SendString("LCD Down\r\n");
+		}else{
+			 REMOTE_Turn();
 		}
 #endif
 		break;
