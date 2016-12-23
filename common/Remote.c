@@ -39,6 +39,7 @@
 #if PL_CONFIG_HAS_REFLECTANCE
 	#include "Reflectance.h"
 	#include "LineFollow.h"
+    #include "Turn.h"
 #endif
 #if PL_CONFIG_HAS_BUZZER
 	#include "Buzzer.h"
@@ -71,6 +72,7 @@ int8_t setdirection = 50;
 int8_t setspeed = 50;
 int8_t actualdirection = 0;
 int8_t actualspeed = 0;
+static uint8_t sigSend = 0;
 
 #if PL_CONFIG_HAS_JOYSTICK
 static uint16_t midPointX, midPointY;
@@ -403,7 +405,6 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 #endif
   uint8_t val;
   int16_t x, y, z;
-  static bool sigSend = FALSE;
   (void)size;
   (void)packet;
   switch(type) {
@@ -443,9 +444,9 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         y1000 = scaleJoystickTo4K(y);
         if (REMOTE_useJoystick) {
           REMOTE_HandleMotorMsg(y1000, x1000, 0); /* first param is forward/backward speed, second param is direction */
-          if(y1000 > 49 && !sigSend)
+          if(y1000 > 10 && sigSend <2)
           {
-        	  sigSend = TRUE;
+        	  sigSend++;;
         	  SendSignal(RAPP_SIG_A);
           }
         }
@@ -470,13 +471,15 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	 REF_CalibrateStartStop();
     	 //DRV_SetMode(DRV_MODE_STOP);
       } else if (val=='A') { /* green 'A' button hooorn */
-		SendSignal(RAPP_SIG_B);
-		LF_StartFollowing();
-		SHELL_SendString("Line Following Start od. Stop\r\n");
+			SendSignal(RAPP_SIG_B);
+			sigSend = 0;
+			LF_StartFollowing();
+			SHELL_SendString("Line Following Start od. Stop\r\n");
       } else if (val=='B') {
-		  DRV_SetMode(DRV_MODE_POS);
-		  TURN_Turn(TURN_RIGHT180, NULL);
+    	  DRV_SetMode(DRV_MODE_POS);
+    	  TURN_Turn(TURN_RIGHT180, NULL);
 		  SHELL_SendString("Turn 180°\r\n");
+    	  DRV_SetMode(DRV_MODE_SPEED);
       }
 #else
       *handled = FALSE; /* no shell and no buzzer? */
