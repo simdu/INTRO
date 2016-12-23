@@ -101,7 +101,7 @@ static void StateMachine(void) {
 	#if PL_CONFIG_HAS_TURN
         LF_currState = STATE_TURN; /* make turn */
         SHELL_SendString((unsigned char*)"no line, turn..\r\n");
-        DRV_SetMode(DRV_MODE_POS);
+        //DRV_SetMode(DRV_MODE_POS);
 	    TURN_Turn(TURN_RIGHT180, NULL);
 	#else
 		LF_currState = STATE_STOP; /* stop if we do not have a line any more */

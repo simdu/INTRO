@@ -277,13 +277,21 @@ static LCDMenu_StatusFlags LineSpeedMenuHandler(const struct LCDMenu_MenuItem_ *
 	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
 	  } else if (event==LCDMENU_EVENT_DECREMENT) {
 		  speed-=10;
-		  UTIL1_strcpy(buf, sizeof(buf), (unsigned char*) "app send in ");
+		  for(int i=0; i < sizeof(buf); i++){
+			  buf[i] = 0;
+		  }
+		  UTIL1_strcpy(buf, sizeof(buf), (unsigned char*) "app send in pid fw speed ");
 		  UTIL1_strcatNum8s(buf, sizeof(buf), speed);
+		  UTIL1_strcat(buf, sizeof(buf), (unsigned char*) "\r\n");
 	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
 	  } else if (event==LCDMENU_EVENT_INCREMENT) {
 		  speed+=10;
-		  UTIL1_strcpy(buf, sizeof(buf), (unsigned char*) "app send in ");
+		  for(int i=0; i < sizeof(buf); i++){
+			  buf[i] = 0;
+		  }
+		  UTIL1_strcpy(buf, sizeof(buf), (unsigned char*) "app send in pid fw speed ");
 		  UTIL1_strcatNum8s(buf, sizeof(buf), speed);
+		  UTIL1_strcat(buf, sizeof(buf), (unsigned char*) "\r\n");
 	    flags |= LCDMENU_STATUS_FLAGS_HANDLED|LCDMENU_STATUS_FLAGS_UPDATE_VIEW;
 	  } else if (event==LCDMENU_EVENT_ENTER){
 		  RSTDIO_SendToTxStdio(queue, buf, UTIL1_strlen((char*)buf));
