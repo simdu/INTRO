@@ -58,6 +58,9 @@
     #include "SW6.h"
     #include "SW7.h"
 #endif
+#if PL_CONFIG_HAS_TURN
+	#include "Turn.h"
+#endif
 
 static bool REMOTE_isOn = FALSE;
 static bool REMOTE_isVerbose = FALSE;
@@ -467,11 +470,13 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	 REF_CalibrateStartStop();
     	 //DRV_SetMode(DRV_MODE_STOP);
       } else if (val=='A') { /* green 'A' button hooorn */
-			SendSignal(RAPP_SIG_B);
-			LF_StartFollowing();
+		SendSignal(RAPP_SIG_B);
+		LF_StartFollowing();
+		SHELL_SendString("Line Following Start od. Stop\r\n");
       } else if (val=='B') {
-    	  DRV_SetMode(DRV_MODE_POS);
-    	  TURN_Turn(TURN_RIGHT180, NULL);
+		  DRV_SetMode(DRV_MODE_POS);
+		  TURN_Turn(TURN_RIGHT180, NULL);
+		  SHELL_SendString("Turn 180°\r\n");
       }
 #else
       *handled = FALSE; /* no shell and no buzzer? */

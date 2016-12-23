@@ -98,26 +98,19 @@ static void StateMachine(void) {
       break;
     case STATE_FOLLOW_SEGMENT:
       if (!FollowSegment()) {
-    #if PL_CONFIG_HAS_LINE_MAZE
+	#if PL_CONFIG_HAS_TURN
         LF_currState = STATE_TURN; /* make turn */
         SHELL_SendString((unsigned char*)"no line, turn..\r\n");
-    #else
-	#if PL_CONFIG_HAS_TURN
         DRV_SetMode(DRV_MODE_POS);
 	    TURN_Turn(TURN_RIGHT180, NULL);
-		LF_currState = STATE_TURN; /* make turn */
 	#else
 		LF_currState = STATE_STOP; /* stop if we do not have a line any more */
 		SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
 	#endif
-    #endif
       }
       break;
 
     case STATE_TURN:
-	  #if PL_CONFIG_HAS_LINE_MAZE
-	  /*! \todo Handle maze turning */
-	  #endif
 	  #if PL_CONFIG_HAS_TURN
     	  if(DRV_HasTurned()){
         	  DRV_SetMode(DRV_MODE_NONE);
